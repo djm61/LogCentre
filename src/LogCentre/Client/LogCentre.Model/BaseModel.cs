@@ -23,12 +23,12 @@
         /// <summary>
         /// Active status of the model, either Y or N
         /// </summary>
-        public string? Active { get; set; }
+        public string Active { get; set; }
 
         /// <summary>
         /// Deleted status of the model, either Y or N
         /// </summary>
-        public string? Deleted { get; set; }
+        public string Deleted { get; set; }
 
         /// <summary>
         /// Username of who last updated the model
