@@ -12,6 +12,8 @@
         {
             Name = string.Empty;
             Path = string.Empty;
+            Host = null;
+            Provider = null;
         }
 
         /// <summary>
@@ -37,12 +39,12 @@
         /// <summary>
         /// Referenced Host
         /// </summary>
-        public HostModel Host { get; set; }
+        public HostModel? Host { get; set; }
 
         /// <summary>
         /// Referenced Provider
         /// </summary>
-        public ProviderModel Provider { get; set; }
+        public ProviderModel? Provider { get; set; }
 
         public override string ToString()
         {

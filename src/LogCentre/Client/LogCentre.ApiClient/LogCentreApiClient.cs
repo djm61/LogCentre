@@ -135,6 +135,14 @@ namespace LogCentre.ApiClient
             return response;
         }
 
+        public async Task<IList<LogSourceModel>> GetLogSourcesByHostAsync(long id, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("GetLogSourcesByHostAsync() | id[{id}]", id);
+            var uri = $"logsource/host/{id}";
+            var response = await GetAsync<IList<LogSourceModel>>(uri, cancellationToken);
+            return response;
+        }
+
         public async Task<LogSourceModel> CreateLogSourceAsync(LogSourceModel logSource, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("CreateLogSourceAsync() | logSource[{logSource}]", logSource);

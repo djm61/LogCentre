@@ -30,6 +30,7 @@ namespace LogCentre.ApiClient
 
         Task<IList<LogSourceModel>> GetLogSourcesAsync(CancellationToken cancellationToken = default);
         Task<LogSourceModel> GetLogSourceByIdAsync(long id, CancellationToken cancellationToken = default);
+        Task<IList<LogSourceModel>> GetLogSourcesByHostAsync(long id, CancellationToken cancellationToken = default);
         Task<LogSourceModel> CreateLogSourceAsync(LogSourceModel logSource, CancellationToken cancellationToken = default);
         Task<LogSourceModel> UpdateLogSourceAsync(LogSourceModel logSource, CancellationToken cancellationToken = default);
         Task DeleteLogSourceAsync(long id, CancellationToken cancellationToken = default);

@@ -2,14 +2,10 @@
 
 using LogCentre.Api.Attributes;
 using LogCentre.Data;
-using LogCentre.Data.Entities;
 using LogCentre.Data.Entities.Log;
-using LogCentre.Model;
 using LogCentre.Model.Log;
 using LogCentre.Services.Exceptions;
-using LogCentre.Services.Interfaces;
 using LogCentre.Services.Interfaces.Log;
-using LogCentre.Services.Services;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

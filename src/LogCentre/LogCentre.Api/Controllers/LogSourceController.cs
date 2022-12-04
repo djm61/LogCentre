@@ -23,7 +23,7 @@ namespace LogCentre.Api.Controllers
     [ApiController]
     public class LogSourceController : BaseApiController<LogSourceController>
     {
-        private const string IncludeTables = "LogSource,LogSource";
+        private const string IncludeTables = "Host,Provider";
 
         private readonly ILogSourceService _logSourceService;
         private readonly IMapper _mapper;
@@ -73,7 +73,7 @@ namespace LogCentre.Api.Controllers
                 var model = _mapper.Map<LogSource, LogSourceModel>(entity);
                 return Ok(model);
             }
-            catch (LineException lse)
+            catch (LogSourceException lse)
             {
                 return HandleBadRequest("Invalid Log Source Id", lse.Message);
             }
@@ -96,6 +96,7 @@ namespace LogCentre.Api.Controllers
         [HttpGet("all", Name = nameof(GetLogSources)), Benchmark]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<LogSourceModel>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetLogSources()
         {
             Logger.LogDebug("GetLogSources()");
@@ -110,9 +111,9 @@ namespace LogCentre.Api.Controllers
                 var models = _mapper.Map<IList<LogSource>, IList<LogSourceModel>>(items);
                 return Ok(models);
             }
-            catch (LineException ale)
+            catch (LogSourceException lse)
             {
-                return HandleBadRequest("Error getting Log Source entries", ale.Message);
+                return HandleBadRequest("Error getting Log Source entries", lse.Message);
             }
             catch (Exception ex)
             {
@@ -124,6 +125,38 @@ namespace LogCentre.Api.Controllers
             {
                 stopwatch.Stop();
                 Logger.LogInformation("**** GetLogSources took [{0}]", stopwatch.Elapsed);
+            }
+        }
+
+        [HttpGet("host/{id:long}"), Benchmark]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<LogSourceModel>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetLogSourcesForHost([FromRoute] long id)
+        {
+            Logger.LogDebug("GetLogSourcesForHost()");
+            var stopwatch = Stopwatch.StartNew();
+
+            try
+            {
+                var entries = await _logSourceService.GetAsync(l => l.HostId == id, l => l.OrderBy(x => x.Name), IncludeTables);
+                var items = entries.ToList();
+
+                var models = _mapper.Map<IList<LogSource>, IList<LogSourceModel>>(items);
+                return Ok(models);
+            }
+            catch (LogSourceException lse)
+            {
+                return HandleBadRequest("Error getting Log Source entries for a host", lse.Message);
+            }
+            catch (Exception ex)
+            {
+                return HandleServerError("An error has occurred", $"GetLogSourcesForHost() produced an exception [{ex.Message}]", ex);
+            }
+            finally
+            {
+                stopwatch.Stop();
+                Logger.LogInformation("**** GetLogSourcesForHost took [{0}]", stopwatch.Elapsed);
             }
         }
 
