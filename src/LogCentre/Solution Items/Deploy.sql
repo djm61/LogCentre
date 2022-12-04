@@ -1,10 +1,11 @@
-/*
+
 drop table [Log].[Line];
+drop table [Log].[File];
 drop table [dbo].[LogSource];
 drop table [dbo].[Provider];
 drop table [dbo].[Host];
 drop schema [Log];
-*/
+
 
 if not exists (select 1 from sys.schemas where name = 'Log')
 begin
@@ -84,12 +85,35 @@ begin
 	print N'Table exists: Provider'
 end
 
+if not exists (select 1 from information_schema.tables where table_name = 'File' and table_schema = 'Log')
+begin
+	print N'Add table: Log File'
+	create table [Log].[File] (
+		[Id] bigint not null primary key identity,
+		[LogSourceId] bigint not null,
+		[Name] nvarchar(100) not null,
+		[Active] nvarchar(1) not null default N'Y',
+		[Deleted] nvarchar(1) not null default N'N',
+		[LastUpdatedBy] nvarchar(256) not null,
+		[RowVersion] datetime not null default getutcdate(),
+		constraint CK_LogFile_Active_YesNo check ([Active] in (N'Y', N'N')),
+		constraint CK_LogFile_Deleted_YesNo check ([Deleted] in (N'Y', N'N')),
+		foreign key ([LogSourceId]) references [dbo].[LogSource]([Id])
+	)
+
+	create index [IX_LogFile_LogSourceID] on [Log].[File]([LogSourceId])
+end
+else
+begin
+	print N'Table exists: Log.File'
+end
+
 if not exists (select 1 from information_schema.tables where table_name = 'Line' and table_schema = 'Log')
 begin
 	print N'Add table: Log.Line'
 	create table [Log].[Line] (
 		[Id] bigint not null primary key identity,
-		[LogSourceId] bigint not null,
+		[FileId] bigint not null,
 		[LogLine] nvarchar(4000) not null,
 		[Active] nvarchar(1) not null default N'Y',
 		[Deleted] nvarchar(1) not null default N'N',
@@ -97,10 +121,10 @@ begin
 		[RowVersion] datetime not null default getutcdate(),
 		constraint CK_LogLine_Active_YesNo check ([Active] in (N'Y', N'N')),
 		constraint CK_LogLine_Deleted_YesNo check ([Deleted] in (N'Y', N'N')),
-		foreign key ([LogSourceId]) references [dbo].[LogSource]([Id])
+		foreign key ([FileId]) references [Log].[File]([Id])
 	)
 
-	create index [IX_LogLine_LogSourceId] on [dbo].[LogSource]([Id])
+	create index [IX_LogLine_FileId] on [Log].[Line]([FileId])
 end
 else
 begin

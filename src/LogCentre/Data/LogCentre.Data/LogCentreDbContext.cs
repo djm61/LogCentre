@@ -32,6 +32,7 @@ namespace LogCentre.Data
         public DbSet<Host> Hosts { get; set; }
         public DbSet<Provider> Providers { get; set; }
         public DbSet<LogSource> Sources { get; set; }
+        public DbSet<Entities.Log.File> LogFiles { get; set; }
         public DbSet<Line> LogLines { get; set; }
 
         #endregion
@@ -44,6 +45,7 @@ namespace LogCentre.Data
             modelBuilder.ApplyConfiguration(new HostConfig());
             modelBuilder.ApplyConfiguration(new ProviderConfig());
             modelBuilder.ApplyConfiguration(new LogSourceConfig());
+            modelBuilder.ApplyConfiguration(new FileConfig());
             modelBuilder.ApplyConfiguration(new LineConfig());
         }
 

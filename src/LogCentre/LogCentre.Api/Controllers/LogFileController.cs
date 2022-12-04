@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-
 using LogCentre.Api.Attributes;
 using LogCentre.Data;
 using LogCentre.Data.Entities.Log;
 using LogCentre.Model.Log;
+
 using LogCentre.Services.Exceptions;
 using LogCentre.Services.Interfaces.Log;
+using LogCentre.Services.Services.Log;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,67 +16,60 @@ using System.Diagnostics;
 namespace LogCentre.Api.Controllers
 {
     /// <summary>
-    /// Controller for Line
+    /// Controller for Log File
     /// </summary>
     [Authorize]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class LogLineController : BaseApiController<LogLineController>
+    public class LogFileController : BaseApiController<LogFileController>
     {
-        private const string IncludeTables = "File.LogSource.Host,File.LogSource.Provider";
+        private const string IncludeTables = "LogSource.Host,LogSource.Provider";
 
-        private readonly ILineService _lineService;
+        private readonly IFileService _fileService;
         private readonly IMapper _mapper;
 
-        /// <summary>
-        /// Constructor for Line
-        /// </summary>
-        /// <param name="logger">Logger implementation</param>
-        /// <param name="lineService">Service for Lines</param>
-        /// <param name="mapper">AutoMapper properties</param>
-        /// <exception cref="ArgumentNullException">Throws if something is null</exception>
-        public LogLineController(ILogger<LogLineController> logger,
-            ILineService lineService,
+        public LogFileController(ILogger<LogFileController> logger,
+            IFileService fileService,
             IMapper mapper)
             : base(logger)
         {
-            _lineService = lineService ?? throw new ArgumentNullException(nameof(lineService));
+            _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         #region Get
 
         /// <summary>
-        /// Gets a single Log Line
+        /// Gets a single Log File
         /// </summary>
-        /// <param name="id">Id of Log Line</param>
-        /// <returns>Log Line</returns>
-        [HttpGet("{id:long}", Name = nameof(GetLineById)), Benchmark]
+        /// <param name="id">Id of Log File</param>
+        /// <returns>Log File</returns>
+        [HttpGet("{id:long}", Name = nameof(GetFileById)), Benchmark]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LineModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetLineById([FromRoute] long id)
+        public async Task<IActionResult> GetFileById([FromRoute] long id)
         {
             Logger.LogDebug("GetLineById() | Id[{id}]", id);
             var stopwatch = Stopwatch.StartNew();
 
             try
             {
-                var entities = await _lineService.GetAsync(a => a.Id == id, null, IncludeTables);
+                var entities = await _fileService.GetAsync(a => a.Id == id, null, IncludeTables);
                 var entity = entities.FirstOrDefault();
                 if (entity == null)
                 {
                     return HandleNotFoundRequest("Log Line not found", $"Log Line with Id[{id}] was not found");
                 }
 
-                var model = _mapper.Map<Line, LineModel>(entity);
+                var model = _mapper.Map<Data.Entities.Log.File, FileModel>(entity);
                 return Ok(model);
             }
             catch (LineException lse)
             {
-                return HandleBadRequest("Invalid Log Line Id", lse.Message);
+                return HandleBadRequest("Invalid Log File Id", lse.Message);
             }
             catch (Exception ex)
             {
@@ -85,34 +79,34 @@ namespace LogCentre.Api.Controllers
             finally
             {
                 stopwatch.Stop();
-                Logger.LogInformation("**** GetLineById took [{0}]", stopwatch.Elapsed);
+                Logger.LogInformation("**** GetFileById took [{0}]", stopwatch.Elapsed);
             }
         }
 
         /// <summary>
-        /// Gets all Log Line lines
+        /// Gets all Log File
         /// </summary>
-        /// <returns>List of <see cref="LineModel">Log Lines</see></returns>
-        [HttpGet("all", Name = nameof(GetLines)), Benchmark]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<LineModel>))]
+        /// <returns>List of <see cref="FileModel">Log Files</see></returns>
+        [HttpGet("all", Name = nameof(GetFiles)), Benchmark]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<FileModel>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetLines()
+        public async Task<IActionResult> GetFiles()
         {
             Logger.LogDebug("GetLines()");
             var stopwatch = Stopwatch.StartNew();
 
             try
             {
-                var entries = await _lineService.GetAsync(null, a => a.OrderByDescending(b => b.RowVersion),
+                var entries = await _fileService.GetAsync(null, a => a.OrderBy(b => b.Name),
                     IncludeTables);
                 var items = entries.ToList();
 
-                var models = _mapper.Map<IList<Line>, IList<LineModel>>(items);
+                var models = _mapper.Map<IList<Data.Entities.Log.File>, IList<FileModel>>(items);
                 return Ok(models);
             }
             catch (LineException ale)
             {
-                return HandleBadRequest("Error getting Log Line entries", ale.Message);
+                return HandleBadRequest("Error getting Log File entries", ale.Message);
             }
             catch (Exception ex)
             {
@@ -132,43 +126,43 @@ namespace LogCentre.Api.Controllers
         #region Post
 
         /// <summary>
-        /// Creates a new Log Line
+        /// Creates a new Log File
         /// </summary>
-        /// <param name="model">The <see cref="LineModel">Log Line</see> to be created</param>
-        /// <returns>The url at which to retrieve the newly created <see cref="LineModel">Log Line</see></returns>
+        /// <param name="model">The <see cref="FileModel">Log File</see> to be created</param>
+        /// <returns>The url at which to retrieve the newly created <see cref="FileModel">Log File</see></returns>
         [HttpPost, Benchmark]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(LineModel))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(FileModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> CreateAsync([FromBody] LineModel model)
+        public async Task<IActionResult> CreateAsync([FromBody] FileModel model)
         {
             Logger.LogDebug("CreateAsync() | model[{model}]", model);
             var stopwatch = Stopwatch.StartNew();
 
             try
             {
-                Line entity;
+                Data.Entities.Log.File entity;
                 if (model.Id > 0)
                 {
-                    if (_lineService.TryGet(model.Id, out entity))
+                    if (_fileService.TryGet(model.Id, out entity))
                     {
                         if (entity != null && entity.Deleted == DataLiterals.Yes)
                         {
-                            return HandleConflictRequest("Log Line already exists", $"Log Line with Id [{entity.Id}] already exists");
+                            return HandleConflictRequest("Log FIle already exists", $"Log File with Id [{entity.Id}] already exists");
                         }
                     }
                 }
 
-                entity = _mapper.Map<LineModel, Line>(model);
-                entity = await _lineService.CreateAsync(entity);
+                entity = _mapper.Map<FileModel, Data.Entities.Log.File>(model);
+                entity = await _fileService.CreateAsync(entity);
 
-                model = _mapper.Map<Line, LineModel>(entity);
-                return CreatedAtAction(nameof(GetLineById), new { id = entity.Id }, model);
+                model = _mapper.Map<Data.Entities.Log.File, FileModel>(entity);
+                return CreatedAtAction(nameof(GetFileById), new { id = entity.Id }, model);
             }
             catch (LineException he)
             {
-                return HandleBadRequest("Error creating new Line", he.Message);
+                return HandleBadRequest("Error creating new File", he.Message);
             }
             catch (Exception ex)
             {
@@ -186,40 +180,40 @@ namespace LogCentre.Api.Controllers
         #region Put
 
         /// <summary>
-        /// Update an existing Log Line
+        /// Update an existing File
         /// </summary>
-        /// <param name="model">The <see cref="LineModel">Log Line</see> to be created</param>
-        /// <returns>The url at which to retrieve the newly created <see cref="LineModel">Log Line</see></returns>
+        /// <param name="model">The <see cref="FileModel">Log File</see> to be created</param>
+        /// <returns>The url at which to retrieve the newly created <see cref="FileModel">Log File</see></returns>
         [HttpPut, Benchmark]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ReplaceAsync([FromBody] LineModel model)
+        public async Task<IActionResult> ReplaceAsync([FromBody] FileModel model)
         {
             Logger.LogDebug("ReplaceAsync() | model[{model}]", model);
             var stopwatch = Stopwatch.StartNew();
 
             try
             {
-                if (!_lineService.TryGet(model.Id, out var entity))
+                if (!_fileService.TryGet(model.Id, out var entity))
                 {
-                    return HandleNotFoundRequest("Invalid Line", "The Line cannot be located by Id");
+                    return HandleNotFoundRequest("Invalid File", "The File cannot be located by Id");
                 }
 
-                entity.FileId = model.FileId;
-                entity.LogLine = model.LogLine;
+                entity.LogSourceId = model.LogSourceId;
+                entity.Name = model.Name;
                 entity.Active = model.Active;
                 entity.Deleted = model.Deleted;
                 entity.LastUpdatedBy = model.LastUpdatedBy;
 
-                await _lineService.UpdateAsync(entity);
+                await _fileService.UpdateAsync(entity);
 
                 return NoContent();
             }
             catch (LineException he)
             {
-                return HandleBadRequest("Error updating Line", he.Message);
+                return HandleBadRequest("Error updating File", he.Message);
             }
             catch (Exception ex)
             {
@@ -237,9 +231,9 @@ namespace LogCentre.Api.Controllers
         #region Delete
 
         /// <summary>
-        /// Delete a Line
+        /// Delete a File
         /// </summary>
-        /// <param name="id">The Line id</param>
+        /// <param name="id">The File id</param>
         /// <returns>No content</returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -253,23 +247,23 @@ namespace LogCentre.Api.Controllers
 
             try
             {
-                if (!_lineService.TryGet(id, out var entity))
+                if (!_fileService.TryGet(id, out var entity))
                 {
-                    return HandleNotFoundRequest("Line not found", $"Unable to locate Line with Id [{id}]");
+                    return HandleNotFoundRequest("File not found", $"Unable to locate File with Id [{id}]");
                 }
 
                 if (entity.Deleted == DataLiterals.Yes)
                 {
-                    return HandleNotFoundRequest("Line not found", $"Line already deleted with Id [{id}]");
+                    return HandleNotFoundRequest("File not found", $"File already deleted with Id [{id}]");
                 }
 
-                await _lineService.DeleteAsync(entity);
+                await _fileService.DeleteAsync(entity);
 
                 return NoContent();
             }
             catch (LineException he)
             {
-                return HandleBadRequest("Error deleting Line", he.Message);
+                return HandleBadRequest("Error deleting File", he.Message);
             }
             catch (Exception ex)
             {
@@ -283,7 +277,7 @@ namespace LogCentre.Api.Controllers
         }
 
         /// <summary>
-        /// Remove a Line and all its dependencies if it has been soft deleted
+        /// Remove a File and all its dependencies if it has been soft deleted
         /// </summary>
         /// <param name="id">The Line id</param>
         [HttpDelete("{id:long}/purge")]
@@ -298,23 +292,23 @@ namespace LogCentre.Api.Controllers
 
             try
             {
-                if (!_lineService.TryGet(id, out var entity))
+                if (!_fileService.TryGet(id, out var entity))
                 {
-                    return HandleNotFoundRequest("Line not found", $"Unable to locate Line with Id [{id}]");
+                    return HandleNotFoundRequest("File not found", $"Unable to locate File with Id [{id}]");
                 }
 
                 if (entity.Deleted == DataLiterals.No)
                 {
-                    return HandleNotFoundRequest("Line not found", $"Line not soft deleted with Id [{id}]");
+                    return HandleNotFoundRequest("File not found", $"File not soft deleted with Id [{id}]");
                 }
 
-                await _lineService.RemoveAsync(entity);
+                await _fileService.RemoveAsync(entity);
 
                 return NoContent();
             }
             catch (LineException he)
             {
-                return HandleBadRequest("Unable to remove Line", he.Message);
+                return HandleBadRequest("Unable to remove File", he.Message);
             }
             catch (Exception ex)
             {

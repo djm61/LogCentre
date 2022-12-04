@@ -27,6 +27,12 @@ namespace LogCentre.Data.Configuration.Log
                 .HasForeignKey(t => t.LogSourceId)
                 .HasConstraintName("FK_Line_LogSourceId")
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+            builder.HasOne(t => t.File)
+                .WithMany(t => t.Lines)
+                .HasForeignKey(t => t.FileId)
+                .HasConstraintName("FK_Line_FileId")
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using LogCentre.ApiClient.HttpClient;
 using LogCentre.Model;
+using LogCentre.Model.Log;
 
 using Microsoft.Extensions.Logging;
 
@@ -145,7 +146,7 @@ namespace LogCentre.ApiClient
 
         public async Task<LogSourceModel> CreateLogSourceAsync(LogSourceModel logSource, CancellationToken cancellationToken = default)
         {
-            Logger.LogDebug("CreateLogSourceAsync() | logSource[{logSource}]", logSource);
+            Logger.LogDebug("CreateLogSourceAsync() | logFile[{logFile}]", logSource);
             var uri = "logsource";
             var response = await PostAsync(uri, logSource, cancellationToken);
             return response;
@@ -153,8 +154,8 @@ namespace LogCentre.ApiClient
 
         public async Task<LogSourceModel> UpdateLogSourceAsync(LogSourceModel logSource, CancellationToken cancellationToken = default)
         {
-            Logger.LogDebug("UpdateLogSourceAsync() | logSource[{logSource}]", logSource);
-            var uri = "logSource";
+            Logger.LogDebug("UpdateLogSourceAsync() | logFile[{logFile}]", logSource);
+            var uri = "logFile";
             var response = await PutAsync(uri, logSource, cancellationToken);
             return response;
         }
@@ -170,6 +171,56 @@ namespace LogCentre.ApiClient
         {
             Logger.LogDebug("PurgeLogSourceAsync() | id[{id}]", id);
             var uri = $"logsource/{id}/purge";
+            await DeleteAsync(uri, cancellationToken);
+        }
+
+        #endregion
+
+        #region Log File
+
+        public async Task<IList<FileModel>> GetLogFilesAsync(CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("GetLogFilesAsync()");
+            var uri = "logfile/all";
+            var response = await GetAsync<IList<FileModel>>(uri, cancellationToken);
+            return response;
+        }
+
+        public async Task<FileModel> GetLogFileByIdAsync(long id, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("GetLogFileByIdAsync() | id[{id}]", id);
+            var uri = $"logfile/{id}";
+            var response = await GetAsync<FileModel>(uri, cancellationToken);
+            return response;
+        }
+
+        public async Task<FileModel> CreateLogFileAsync(FileModel logFile, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("CreateLogFileAsync() | logFile[{logFile}]", logFile);
+            var uri = "logfile";
+            var response = await PostAsync(uri, logFile, cancellationToken);
+            return response;
+        }
+
+        public async Task<FileModel> UpdateLogFileAsync(FileModel logFile, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("UpdateLogFileAsync() | logFile[{logFile}]", logFile);
+            var uri = "logfile";
+            var response = await PutAsync(uri, logFile, cancellationToken);
+            return response;
+        }
+
+        public async Task DeleteLogFileAsync(long id, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("DeleteLogFileAsync() | id[{id}]", id);
+            var uri = $"logfile/{id}";
+            await DeleteAsync(uri, cancellationToken);
+        }
+
+        public async Task PurgeLogFileAsync(long id, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("PurgeLogFileAsync() | id[{id}]", id);
+            var uri = $"logfile/{id}/purge";
             await DeleteAsync(uri, cancellationToken);
         }
 

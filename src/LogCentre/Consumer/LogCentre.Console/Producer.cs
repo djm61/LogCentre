@@ -36,7 +36,13 @@ namespace LogCentre.Console
                 {
                     foreach (var logSource in logSources)
                     {
-                        //todo read
+                        //todo read files
+                        var directory = new DirectoryInfo(logSource.Path);
+                        foreach (var file in directory.GetFiles())
+                        {
+                            var lines = File.ReadAllLines(file.FullName);
+                            var logFile = new Model.FileMo
+                        }
                     }
                 });
             }

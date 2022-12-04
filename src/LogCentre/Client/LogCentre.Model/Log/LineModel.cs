@@ -14,9 +14,9 @@
         }
 
         /// <summary>
-        /// Id of the Log Source
+        /// Id of the File
         /// </summary>
-        public long LogSourceId { get; set; }
+        public long FileId { get; set; }
 
         /// <summary>
         /// Log Line
@@ -26,11 +26,11 @@
         /// <summary>
         /// Referenced Log Source
         /// </summary>
-        public LogSourceModel LogSource { get; set; }
+        public FileModel LogFile { get; set; }
 
         public override string ToString()
         {
-            return $"LogSourceId[{LogSourceId}], Line[{LogLine}], {base.ToString}";
+            return $"FileId[{FileId}], Line[{LogLine}], {base.ToString}";
         }
     }
 }

@@ -23,6 +23,41 @@ namespace LogCentre.SeedData
                 context.SaveChanges();
             }
 
+#if DEBUG
+            Host[] hosts;
+            if (!context.Hosts.Any())
+            {
+                hosts = new Host[]
+                {
+                    new Host{Name = "local", Description = "Local", LastUpdatedBy = "seed"}
+                };
+
+                context.Hosts.AddRange(hosts);
+                context.SaveChanges();
+            }
+
+            LogSource[] logSources;
+            if (!context.Sources.Any())
+            {
+                logSources = new[]
+                {
+                    new LogSource {HostId = 1, ProviderId = 1, Name = "local log centre", Path = "C:/ProgramData/LogCentre/local/", LastUpdatedBy = "seed"}
+                };
+
+                context.Sources.AddRange(logSources);
+                context.SaveChanges();
+            }
+
+            //Data.Entities.Log.File[] files;
+            //if (!context.LogFiles.Any())
+            //{
+            //    files = new[]
+            //    {
+            //        new Data.Entities.Log.File{LogSourceId = 1, Name = "LogCentre.Api-"}
+            //    }
+            //}
+#endif
+
             #endregion
         }
     }

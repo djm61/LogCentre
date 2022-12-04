@@ -1,4 +1,5 @@
 ﻿using LogCentre.Model;
+using LogCentre.Model.Log;
 
 namespace LogCentre.ApiClient
 {
@@ -36,6 +37,20 @@ namespace LogCentre.ApiClient
         Task DeleteLogSourceAsync(long id, CancellationToken cancellationToken = default);
         Task PurgeLogSourceAsync(long id, CancellationToken cancellationToken = default);
 
+        #endregion
+
+        #region Log File
+
+        Task<IList<FileModel>> GetLogFileAsync(CancellationToken cancellationToken = default);
+        Task<FileModel> GetLogFileByIdAsync(long id, CancellationToken cancellationToken = default);
+        Task<FileModel> CreateLogFileAsync(FileModel provider, CancellationToken cancellationToken = default);
+        Task<FileModel> UpdateLogFileAsync(FileModel provider, CancellationToken cancellationToken = default);
+        Task DeleteLogFileAsync(long id, CancellationToken cancellationToken = default);
+        Task PurgeLogFileAsync(long id, CancellationToken cancellationToken = default);
+
+        #endregion
+
+        #region Log Line
         #endregion
     }
 }
