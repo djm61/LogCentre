@@ -1,5 +1,8 @@
 ﻿namespace LogCentre.Model
 {
+    /// <summary>
+    /// Provider
+    /// </summary>
     public class ProviderModel : BaseModel
     {
         /// <summary>

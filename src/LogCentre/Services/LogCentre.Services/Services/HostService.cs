@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 using System.Diagnostics;
 
-namespace LogCentre.Services
+namespace LogCentre.Services.Services
 {
     public class HostService : AbstractService<HostService, Host, long>, IHostService
     {

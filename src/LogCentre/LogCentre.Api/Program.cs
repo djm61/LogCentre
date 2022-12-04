@@ -3,8 +3,10 @@ using LogCentre.Api.Models;
 using LogCentre.Data;
 using LogCentre.Data.Interfaces;
 using LogCentre.SeedData;
-using LogCentre.Services;
 using LogCentre.Services.Interfaces;
+using LogCentre.Services.Interfaces.Log;
+using LogCentre.Services.Services;
+using LogCentre.Services.Services.Log;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +41,7 @@ builder.Services.AddAutoMapper(typeof(LogCentreAutoMapperProfile));
 builder.Services.AddTransient<IHostService, HostService>();
 builder.Services.AddTransient<IProviderService, ProviderService>();
 builder.Services.AddTransient<ILogSourceService, LogSourceService>();
+builder.Services.AddTransient<ILineService, LineService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

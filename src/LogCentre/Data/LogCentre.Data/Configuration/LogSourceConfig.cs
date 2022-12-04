@@ -42,6 +42,8 @@ namespace LogCentre.Data.Configuration
                 .HasForeignKey(t => t.ProviderId)
                 .HasConstraintName("FK_LogSource_ProviderId")
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+
         }
     }
 }

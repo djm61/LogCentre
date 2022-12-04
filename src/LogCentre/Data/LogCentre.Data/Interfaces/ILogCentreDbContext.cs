@@ -1,4 +1,5 @@
 ﻿using LogCentre.Data.Entities;
+using LogCentre.Data.Entities.Log;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -13,6 +14,7 @@ namespace LogCentre.Data.Interfaces
         public DbSet<Host> Hosts { get; set; }
         public DbSet<Provider> Providers { get; set; }
         public DbSet<LogSource> Sources { get; set; }
+        public DbSet<Line> LogLines { get; set; }
 
         #endregion
 

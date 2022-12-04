@@ -1,5 +1,8 @@
 ﻿namespace LogCentre.Model
 {
+    /// <summary>
+    /// Host
+    /// </summary>
     public class HostModel : BaseModel
     {
         /// <summary>

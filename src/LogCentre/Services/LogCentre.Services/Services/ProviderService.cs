@@ -9,30 +9,25 @@ using Microsoft.Extensions.Logging;
 
 using System.Diagnostics;
 
-namespace LogCentre.Services
+namespace LogCentre.Services.Services
 {
-    public class LogSourceService : AbstractService<LogSourceService, LogSource, long>, ILogSourceService
+    public class ProviderService : AbstractService<ProviderService, Provider, long>, IProviderService
     {
-        private const string IncludeTables = "Host,Provider";
-
-        public LogSourceService(ILogger<LogSourceService> logger,
+        public ProviderService(ILogger<ProviderService> logger,
             ILogCentreDbContext dbContext)
             : base(logger, dbContext)
         {
         }
 
-        public override bool TryGet(long id, out LogSource entity)
+        public override bool TryGet(long id, out Provider entity)
         {
             Logger.LogDebug("TryGet() | id[{id}]", id);
 
-            entity = DbSet
-                .Include(a => a.Host)
-                .Include(a => a.Provider)
-                .FirstOrDefault(x => x.Id == id);
+            entity = DbSet.FirstOrDefault(x => x.Id == id);
             return entity != null;
         }
 
-        public async Task<LogSource> GetAsync(long id)
+        public async Task<Provider> GetAsync(long id)
         {
             Logger.LogDebug("GetAsync() | id[{id}]", id);
             var stopwatch = Stopwatch.StartNew();
@@ -42,18 +37,20 @@ namespace LogCentre.Services
                 if (id < 1)
                 {
                     Logger.LogWarning("GetAsync() | invalid id");
-                    throw new LogSourceException("Invalid Id: " + id);
+                    throw new ProviderException("Invalid Id: " + id);
                 }
 
+                //var entity = await GetAsync(t => t.Id == id && t.Deleted == EntityLiterals.No,
+                //    q => q.OrderBy(d => d.Id));
                 var entity = await GetAsync(t => t.Id == id && t.Deleted == DataLiterals.No,
-                    q => q.OrderBy(d => d.Id), IncludeTables);
+                    q => q.OrderBy(d => d.Name));
 
                 return entity.FirstOrDefault();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.LogError($"GetAsync() | error [{e}]", e);
-                throw new LogSourceException($"GetAsync() for ID [{id}] threw exception: {e.Message}. See inner exception for details", e);
+                Logger.LogError($"GetAsync() | error [{ex}]", ex);
+                throw new ProviderException($"GetAsync() for ID [{id}] threw exception: {ex.Message}. See inner exception for details", ex);
             }
             finally
             {
@@ -62,7 +59,7 @@ namespace LogCentre.Services
             }
         }
 
-        public override async Task RemoveAsync(LogSource entity)
+        public override async Task RemoveAsync(Provider entity)
         {
             Logger.LogDebug("RemoveAsync() | entity[{entity}]", entity);
             var stopwatch = Stopwatch.StartNew();
@@ -80,7 +77,7 @@ namespace LogCentre.Services
             catch (Exception ex)
             {
                 Logger.LogError($"RemoveAsync() | Error deleting temperature [{ex}]", ex);
-                throw new LogSourceException($"RemoveAsync() for entity [{entity}] threw exception: {ex.Message}. See inner exception for details", ex);
+                throw new ProviderException($"RemoveAsync() for entity [{entity}] threw exception: {ex.Message}. See inner exception for details", ex);
             }
             finally
             {

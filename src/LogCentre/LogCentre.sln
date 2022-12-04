@@ -26,6 +26,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogCentre.SeedData", "Data\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogCentre.ApiClient", "Client\LogCentre.ApiClient\LogCentre.ApiClient.csproj", "{3DAA31AD-0A2F-4B52-8CD4-753650A8F7FF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumer", "Consumer", "{E56E1909-19AE-4B59-BD84-7DD8B95CF1CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogCentre.Console", "Consumer\LogCentre.Console\LogCentre.Console.csproj", "{9E0A83D8-3296-4CC9-A317-F15808A13B2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,10 @@ Global
 		{3DAA31AD-0A2F-4B52-8CD4-753650A8F7FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DAA31AD-0A2F-4B52-8CD4-753650A8F7FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DAA31AD-0A2F-4B52-8CD4-753650A8F7FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E0A83D8-3296-4CC9-A317-F15808A13B2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E0A83D8-3296-4CC9-A317-F15808A13B2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E0A83D8-3296-4CC9-A317-F15808A13B2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E0A83D8-3296-4CC9-A317-F15808A13B2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +74,7 @@ Global
 		{B40234FD-F189-410F-AA0A-684408C2168F} = {15A291B5-9AD9-4099-A6C9-3A49433B5181}
 		{FEDE7CDD-C714-4168-95C4-7BB1AE2D9CBA} = {E2C252F3-53B3-4AA9-8661-7336D181F79A}
 		{3DAA31AD-0A2F-4B52-8CD4-753650A8F7FF} = {15A291B5-9AD9-4099-A6C9-3A49433B5181}
+		{9E0A83D8-3296-4CC9-A317-F15808A13B2E} = {E56E1909-19AE-4B59-BD84-7DD8B95CF1CD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {77A8B079-05B3-4B0B-80C6-A6B38FA83F50}

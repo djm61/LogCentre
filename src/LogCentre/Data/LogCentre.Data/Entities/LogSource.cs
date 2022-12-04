@@ -1,9 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LogCentre.Data.Entities.Log;
+
+using System.ComponentModel.DataAnnotations;
 
 namespace LogCentre.Data.Entities
 {
     public class LogSource : BaseEntity
     {
+        public LogSource()
+        {
+            LogLines = new HashSet<Line>();
+        }
+
         [Required]
         public long HostId { get; set; }
 
@@ -22,5 +29,6 @@ namespace LogCentre.Data.Entities
 
         public Host Host { get; set; }
         public Provider Provider { get; set; }
+        public ICollection<Line> LogLines { get; set; }
     }
 }

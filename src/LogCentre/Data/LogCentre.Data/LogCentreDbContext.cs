@@ -1,5 +1,7 @@
 ﻿using LogCentre.Data.Configuration;
+using LogCentre.Data.Configuration.Log;
 using LogCentre.Data.Entities;
+using LogCentre.Data.Entities.Log;
 using LogCentre.Data.Interfaces;
 
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +32,7 @@ namespace LogCentre.Data
         public DbSet<Host> Hosts { get; set; }
         public DbSet<Provider> Providers { get; set; }
         public DbSet<LogSource> Sources { get; set; }
+        public DbSet<Line> LogLines { get; set; }
 
         #endregion
 
@@ -41,6 +44,7 @@ namespace LogCentre.Data
             modelBuilder.ApplyConfiguration(new HostConfig());
             modelBuilder.ApplyConfiguration(new ProviderConfig());
             modelBuilder.ApplyConfiguration(new LogSourceConfig());
+            modelBuilder.ApplyConfiguration(new LineConfig());
         }
 
         public override int SaveChanges()

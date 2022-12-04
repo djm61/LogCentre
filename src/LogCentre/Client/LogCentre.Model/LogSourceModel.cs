@@ -1,5 +1,8 @@
 ﻿namespace LogCentre.Model
 {
+    /// <summary>
+    /// Log Source
+    /// </summary>
     public class LogSourceModel : BaseModel
     {
         /// <summary>

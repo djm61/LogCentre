@@ -1,3 +1,21 @@
+/*
+drop table [Log].[Line];
+drop table [dbo].[LogSource];
+drop table [dbo].[Provider];
+drop table [dbo].[Host];
+drop schema [Log];
+*/
+
+if not exists (select 1 from sys.schemas where name = 'Log')
+begin
+	print N'Adding schema: Log'
+	exec ('create schema [Log] authorization [dbo];')
+end
+else
+begin
+	print N'Schema already exists: Log'
+end
+
 if not exists (select 1 from information_schema.tables where table_name = 'Host' and table_schema = 'dbo')
 begin
 	print N'Add table: Host'
@@ -64,6 +82,29 @@ end
 else
 begin
 	print N'Table exists: Provider'
+end
+
+if not exists (select 1 from information_schema.tables where table_name = 'Line' and table_schema = 'Log')
+begin
+	print N'Add table: Log.Line'
+	create table [Log].[Line] (
+		[Id] bigint not null primary key identity,
+		[LogSourceId] bigint not null,
+		[LogLine] nvarchar(4000) not null,
+		[Active] nvarchar(1) not null default N'Y',
+		[Deleted] nvarchar(1) not null default N'N',
+		[LastUpdatedBy] nvarchar(256) not null,
+		[RowVersion] datetime not null default getutcdate(),
+		constraint CK_LogLine_Active_YesNo check ([Active] in (N'Y', N'N')),
+		constraint CK_LogLine_Deleted_YesNo check ([Deleted] in (N'Y', N'N')),
+		foreign key ([LogSourceId]) references [dbo].[LogSource]([Id])
+	)
+
+	create index [IX_LogLine_LogSourceId] on [dbo].[LogSource]([Id])
+end
+else
+begin
+	print N'Table exists: Log.Line'
 end
 
 go
