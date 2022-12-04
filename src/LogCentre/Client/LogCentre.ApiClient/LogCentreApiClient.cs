@@ -225,5 +225,55 @@ namespace LogCentre.ApiClient
         }
 
         #endregion
+
+        #region Log Line
+
+        public async Task<IList<LineModel>> GetLogLinesAsync(CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("GetLogLinesAsync()");
+            var uri = "logline/all";
+            var response = await GetAsync<IList<LineModel>>(uri, cancellationToken);
+            return response;
+        }
+
+        public async Task<LineModel> GetLogLineByIdAsync(long id, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("GetLogLineByIdAsync() | id[{id}]", id);
+            var uri = $"logline/{id}";
+            var response = await GetAsync<LineModel>(uri, cancellationToken);
+            return response;
+        }
+
+        public async Task<LineModel> CreateLogLineAsync(LineModel logFile, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("CreateLogLineAsync() | logFile[{logFile}]", logFile);
+            var uri = "logline";
+            var response = await PostAsync(uri, logFile, cancellationToken);
+            return response;
+        }
+
+        public async Task<LineModel> UpdateLogLineAsync(LineModel logFile, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("UpdateLogLineAsync() | logFile[{logFile}]", logFile);
+            var uri = "logline";
+            var response = await PutAsync(uri, logFile, cancellationToken);
+            return response;
+        }
+
+        public async Task DeleteLogLineAsync(long id, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("DeleteLogLineAsync() | id[{id}]", id);
+            var uri = $"logline/{id}";
+            await DeleteAsync(uri, cancellationToken);
+        }
+
+        public async Task PurgeLogLineAsync(long id, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("PurgeLogLineAsync() | id[{id}]", id);
+            var uri = $"logline/{id}/purge";
+            await DeleteAsync(uri, cancellationToken);
+        }
+
+        #endregion
     }
 }

@@ -41,7 +41,7 @@ namespace LogCentre.ApiClient
 
         #region Log File
 
-        Task<IList<FileModel>> GetLogFileAsync(CancellationToken cancellationToken = default);
+        Task<IList<FileModel>> GetLogFilesAsync(CancellationToken cancellationToken = default);
         Task<FileModel> GetLogFileByIdAsync(long id, CancellationToken cancellationToken = default);
         Task<FileModel> CreateLogFileAsync(FileModel provider, CancellationToken cancellationToken = default);
         Task<FileModel> UpdateLogFileAsync(FileModel provider, CancellationToken cancellationToken = default);
@@ -51,6 +51,14 @@ namespace LogCentre.ApiClient
         #endregion
 
         #region Log Line
+
+        Task<IList<LineModel>> GetLogLinesAsync(CancellationToken cancellationToken = default);
+        Task<LineModel> GetLogLineByIdAsync(long id, CancellationToken cancellationToken = default);
+        Task<LineModel> CreateLogLineAsync(LineModel provider, CancellationToken cancellationToken = default);
+        Task<LineModel> UpdateLogLineAsync(LineModel provider, CancellationToken cancellationToken = default);
+        Task DeleteLogLineAsync(long id, CancellationToken cancellationToken = default);
+        Task PurgeLogLineAsync(long id, CancellationToken cancellationToken = default);
+
         #endregion
     }
 }
