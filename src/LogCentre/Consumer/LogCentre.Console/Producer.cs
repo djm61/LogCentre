@@ -38,10 +38,12 @@ namespace LogCentre.Console
                     {
                         //todo read files
                         var directory = new DirectoryInfo(logSource.Path);
+                        //todo sort by oldest first
                         foreach (var file in directory.GetFiles())
                         {
+                            //todo check if file is already fully read, if yes, skip file, if no, find last read line and then read from there (line count maybe?)
                             var lines = File.ReadAllLines(file.FullName);
-                            var logFile = new Model.FileMo
+                            var logFile = new FileModel();
                         }
                     }
                 });
