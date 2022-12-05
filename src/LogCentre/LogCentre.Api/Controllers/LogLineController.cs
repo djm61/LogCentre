@@ -6,6 +6,7 @@ using LogCentre.Data.Entities.Log;
 using LogCentre.Model.Log;
 using LogCentre.Services.Exceptions;
 using LogCentre.Services.Interfaces.Log;
+using LogCentre.Services.Services.Log;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -96,6 +97,7 @@ namespace LogCentre.Api.Controllers
         [HttpGet("all", Name = nameof(GetLines)), Benchmark]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<LineModel>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetLines()
         {
             Logger.LogDebug("GetLines()");
@@ -124,6 +126,67 @@ namespace LogCentre.Api.Controllers
             {
                 stopwatch.Stop();
                 Logger.LogInformation("**** GetLines took [{0}]", stopwatch.Elapsed);
+            }
+        }
+
+        [HttpGet("file/{id:long}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<LineModel>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetLinesForLogFile([FromRoute] long id)
+        {
+            Logger.LogDebug("GetLinesForLogFile() | id[{id}]", id);
+            var stopwatch = Stopwatch.StartNew();
+
+            try
+            {
+                var entries = await _lineService.GetAsync(l => l.FileId == id, l => l.OrderByDescending(x => x.RowVersion), IncludeTables);
+                var items = entries.ToList();
+
+                var models = _mapper.Map<IList<Line>, IList<LineModel>>(items);
+                return Ok(models);
+            }
+            catch (LineException le)
+            {
+                return HandleBadRequest("Error getting Log Line entries for a Log File", le.Message);
+            }
+            catch (Exception ex)
+            {
+                return HandleServerError("An error has occurred", $"GetLogSourcesForHost() produced an exception [{ex.Message}]", ex);
+            }
+            finally
+            {
+                stopwatch.Stop();
+                Logger.LogInformation("**** GetLineForLogFile took [{0}]", stopwatch.Elapsed);
+            }
+        }
+
+        [HttpGet("file/{fileId:long}/count")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<LineModel>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetLinesCountForLogFile([FromRoute] long fileId)
+        {
+            Logger.LogDebug("GetLinesCountForLogFile() | fileId[{fileId}]", fileId);
+            var stopwatch = Stopwatch.StartNew();
+
+            try
+            {
+                var count = await _lineService.GetLineCountForFileAsync(fileId);
+                return Ok(count);
+            }
+            catch (LineException le)
+            {
+                return HandleBadRequest("Error getting Log Line entries for a Log File", le.Message);
+            }
+            catch (Exception ex)
+            {
+                return HandleServerError("An error has occurred", $"GetLogSourcesForHost() produced an exception [{ex.Message}]", ex);
+            }
+            finally
+            {
+                stopwatch.Stop();
+                Logger.LogInformation("**** GetLineForLogFile took [{0}]", stopwatch.Elapsed);
             }
         }
 

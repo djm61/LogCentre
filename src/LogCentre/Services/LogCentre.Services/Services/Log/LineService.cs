@@ -58,6 +58,36 @@ namespace LogCentre.Services.Services.Log
             }
         }
 
+        public async Task<long> GetLineCountForFileAsync(long fileId)
+        {
+            Logger.LogDebug("GetLineCountForFileAsync() | fileId[{fileId}]", fileId);
+            var stopwatch = Stopwatch.StartNew();
+
+            try
+            {
+                if (fileId < 1)
+                {
+                    Logger.LogWarning("GetLineCountForFileAsync() | invalid file id");
+                    throw new LineException("Invalid FileId: " + fileId);
+                }
+
+                var count = await CountAsync(t => t.FileId == fileId && t.Deleted == DataLiterals.No,
+                    q => q.OrderByDescending(d => d.RowVersion));
+
+                return count;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"CountAsync() | error [{ex}]", ex);
+                throw new LineException($"CountAsync() for File Id [{fileId}] thre exception: {ex.Message}.  See inner exception for detail", ex);
+            }
+            finally
+            {
+                stopwatch.Stop();
+                Logger.LogInformation("**** CountAsync() took [{0}]", stopwatch.Elapsed);
+            }
+        }
+
         public override async Task RemoveAsync(Line entity)
         {
             Logger.LogDebug("RemoveAsync() | entity[{entity}]", entity);

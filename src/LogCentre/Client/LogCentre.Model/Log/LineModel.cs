@@ -26,7 +26,7 @@
         /// <summary>
         /// Referenced Log Source
         /// </summary>
-        public FileModel LogFile { get; set; }
+        public FileModel? LogFile { get; set; }
 
         public override string ToString()
         {

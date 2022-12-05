@@ -24,11 +24,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Solution Items", "!Solutio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogCentre.SeedData", "Data\LogCentre.SeedData\LogCentre.SeedData.csproj", "{FEDE7CDD-C714-4168-95C4-7BB1AE2D9CBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogCentre.ApiClient", "Client\LogCentre.ApiClient\LogCentre.ApiClient.csproj", "{3DAA31AD-0A2F-4B52-8CD4-753650A8F7FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogCentre.ApiClient", "Client\LogCentre.ApiClient\LogCentre.ApiClient.csproj", "{3DAA31AD-0A2F-4B52-8CD4-753650A8F7FF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumer", "Consumer", "{E56E1909-19AE-4B59-BD84-7DD8B95CF1CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogCentre.Console", "Consumer\LogCentre.Console\LogCentre.Console.csproj", "{9E0A83D8-3296-4CC9-A317-F15808A13B2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogCentre.Console", "Consumer\LogCentre.Console\LogCentre.Console.csproj", "{9E0A83D8-3296-4CC9-A317-F15808A13B2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

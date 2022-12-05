@@ -43,6 +43,7 @@ namespace LogCentre.ApiClient
 
         Task<IList<FileModel>> GetLogFilesAsync(CancellationToken cancellationToken = default);
         Task<FileModel> GetLogFileByIdAsync(long id, CancellationToken cancellationToken = default);
+        Task<IList<FileModel>> GetFilesByLogSourceIdAsync(long id, CancellationToken cancellationToken = default);
         Task<FileModel> CreateLogFileAsync(FileModel provider, CancellationToken cancellationToken = default);
         Task<FileModel> UpdateLogFileAsync(FileModel provider, CancellationToken cancellationToken = default);
         Task DeleteLogFileAsync(long id, CancellationToken cancellationToken = default);
@@ -54,6 +55,7 @@ namespace LogCentre.ApiClient
 
         Task<IList<LineModel>> GetLogLinesAsync(CancellationToken cancellationToken = default);
         Task<LineModel> GetLogLineByIdAsync(long id, CancellationToken cancellationToken = default);
+        Task<long> GetLogLineCountByFileIdAsync(long fileId, CancellationToken cancellationToken = default);
         Task<LineModel> CreateLogLineAsync(LineModel provider, CancellationToken cancellationToken = default);
         Task<LineModel> UpdateLogLineAsync(LineModel provider, CancellationToken cancellationToken = default);
         Task DeleteLogLineAsync(long id, CancellationToken cancellationToken = default);

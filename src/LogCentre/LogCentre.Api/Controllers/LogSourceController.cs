@@ -134,7 +134,7 @@ namespace LogCentre.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetLogSourcesForHost([FromRoute] long id)
         {
-            Logger.LogDebug("GetLogSourcesForHost()");
+            Logger.LogDebug("GetLogSourcesForHost() | id[{id}]", id);
             var stopwatch = Stopwatch.StartNew();
 
             try

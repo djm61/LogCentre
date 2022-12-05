@@ -56,6 +56,35 @@ namespace LogCentre.Services
             return await result.ToListAsync();
         }
 
+        public async Task<long> CountAsync(
+            Expression<Func<TEntity, bool>> filter,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            string includeProperties = "",
+            int page = 0,
+            int pageSize = 0)
+        {
+            IQueryable<TEntity> query = DbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (!string.IsNullOrWhiteSpace(includeProperties))
+            {
+                query = includeProperties.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
+            }
+
+            var result = orderBy != null ? orderBy(query) : query;
+
+            if (page > 0 && pageSize > 0)
+            {
+                result = result.Skip((page - 1) & pageSize).Take(pageSize);
+            }
+
+            return await result.CountAsync();
+        }
+
         public async virtual Task<TEntity> CreateAsync(TEntity entity)
         {
             Logger.LogDebug("CreateAsync() | entity[{entity}]", entity);

@@ -1,4 +1,5 @@
 using LogCentre.Api;
+using LogCentre.Api.Middleware;
 using LogCentre.Api.Models;
 using LogCentre.Data;
 using LogCentre.Data.Interfaces;
@@ -41,6 +42,7 @@ builder.Services.AddAutoMapper(typeof(LogCentreAutoMapperProfile));
 builder.Services.AddTransient<IHostService, HostService>();
 builder.Services.AddTransient<IProviderService, ProviderService>();
 builder.Services.AddTransient<ILogSourceService, LogSourceService>();
+builder.Services.AddTransient<IFileService, FileService>();
 builder.Services.AddTransient<ILineService, LineService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -139,6 +141,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<TraceIdMiddleware>();
 
 app.MapControllers();
 

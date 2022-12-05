@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using LogCentre.Api.Attributes;
 using LogCentre.Data;
+using LogCentre.Data.Entities;
 using LogCentre.Data.Entities.Log;
+using LogCentre.Model;
 using LogCentre.Model.Log;
 
 using LogCentre.Services.Exceptions;
@@ -12,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Diagnostics;
+using System.Runtime.Intrinsics.X86;
 
 namespace LogCentre.Api.Controllers
 {
@@ -46,7 +49,7 @@ namespace LogCentre.Api.Controllers
         /// <param name="id">Id of Log File</param>
         /// <returns>Log File</returns>
         [HttpGet("{id:long}", Name = nameof(GetFileById)), Benchmark]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LineModel))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -100,6 +103,10 @@ namespace LogCentre.Api.Controllers
                 var entries = await _fileService.GetAsync(null, a => a.OrderBy(b => b.Name),
                     IncludeTables);
                 var items = entries.ToList();
+                if (items.Count == 0)
+                {
+                    return Ok(new List<FileModel>());
+                }
 
                 var models = _mapper.Map<IList<Data.Entities.Log.File>, IList<FileModel>>(items);
                 return Ok(models);
@@ -118,6 +125,42 @@ namespace LogCentre.Api.Controllers
             {
                 stopwatch.Stop();
                 Logger.LogInformation("**** GetLines took [{0}]", stopwatch.Elapsed);
+            }
+        }
+
+        [HttpGet("logsource/{id:long}"), Benchmark]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<FileModel>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetFilesByLogSource([FromRoute] long id)
+        {
+            Logger.LogDebug("GetFilesByLogSource() | id[{id}]", id);
+            var stopwatch = Stopwatch.StartNew();
+
+            try
+            {
+                var entries = await _fileService.GetAsync(l => l.LogSourceId == id, l => l.OrderBy(x => x.Name), IncludeTables);
+                var items = entries.ToList();
+                if(items.Count== 0)
+                {
+                    return Ok(new List<FileModel>());
+                }
+
+                var models = _mapper.Map<IList<Data.Entities.Log.File>, IList<FileModel>>(items);
+                return Ok(models);
+            }
+            catch (FileException fe)
+            {
+                return HandleBadRequest("Error getting File entries for a Log Source", fe.Message);
+            }
+            catch (Exception ex)
+            {
+                return HandleServerError("An error has occurred", $"GetLogSourcesForHost() produced an exception [{ex.Message}]", ex);
+            }
+            finally
+            {
+                stopwatch.Stop();
+                Logger.LogInformation("**** GetFilesByLogSource took [{0}]", stopwatch.Elapsed);
             }
         }
 

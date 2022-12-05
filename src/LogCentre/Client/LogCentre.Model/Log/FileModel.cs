@@ -18,7 +18,7 @@
         /// <summary>
         /// Referenced Log Source
         /// </summary>
-        public LogSourceModel LogSource { get; set; }
+        public LogSourceModel? LogSource { get; set; }
 
         public override string ToString()
         {

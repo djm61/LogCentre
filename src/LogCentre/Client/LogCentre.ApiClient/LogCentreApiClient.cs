@@ -4,6 +4,8 @@ using LogCentre.Model.Log;
 
 using Microsoft.Extensions.Logging;
 
+using System.Threading;
+
 namespace LogCentre.ApiClient
 {
     public class LogCentreApiClient : JsonApiClient<LogCentreApiClient>, ILogCentreApiClient
@@ -194,6 +196,14 @@ namespace LogCentre.ApiClient
             return response;
         }
 
+        public async Task<IList<FileModel>> GetFilesByLogSourceIdAsync(long id, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("GetFileByLogSourceIdAsync() | id[{id}]", id);
+            var uri = $"logfile/logsource/{id}";
+            var response = await GetAsync<IList<FileModel>>(uri, cancellationToken);
+            return response;
+        }
+
         public async Task<FileModel> CreateLogFileAsync(FileModel logFile, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("CreateLogFileAsync() | logFile[{logFile}]", logFile);
@@ -241,6 +251,14 @@ namespace LogCentre.ApiClient
             Logger.LogDebug("GetLogLineByIdAsync() | id[{id}]", id);
             var uri = $"logline/{id}";
             var response = await GetAsync<LineModel>(uri, cancellationToken);
+            return response;
+        }
+
+        public async Task<long> GetLogLineCountByFileIdAsync(long fileId, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("GetLogLineCountByFileIdAsync() | fileId[{fileId}]", fileId);
+            var uri = $"logline/file/{fileId}/count";
+            var response = await GetAsync<long>(uri, cancellationToken);
             return response;
         }
 
