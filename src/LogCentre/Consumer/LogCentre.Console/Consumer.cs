@@ -33,7 +33,7 @@ namespace LogCentre.Console
                 {
                     _logger.LogDebug("StartAsync() | writing line");
                     await _client.CreateLogLineAsync(item);
-                    await Task.Delay(1000);
+                    //await Task.Delay(1000);
                 }
                 catch (Exception ex)
                 {

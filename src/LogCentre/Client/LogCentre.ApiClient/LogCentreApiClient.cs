@@ -4,8 +4,6 @@ using LogCentre.Model.Log;
 
 using Microsoft.Extensions.Logging;
 
-using System.Threading;
-
 namespace LogCentre.ApiClient
 {
     public class LogCentreApiClient : JsonApiClient<LogCentreApiClient>, ILogCentreApiClient
@@ -46,12 +44,11 @@ namespace LogCentre.ApiClient
             return response;
         }
 
-        public async Task<HostModel> UpdateHostAsync(HostModel host, CancellationToken cancellationToken = default)
+        public async Task UpdateHostAsync(HostModel host, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("UpdateHostAsync() | host[{host}]", host);
             var uri = "host";
-            var response = await PutAsync(uri, host, cancellationToken);
-            return response;
+            await PutAsync(uri, host, cancellationToken);
         }
 
         public async Task DeleteHostAsync(long id, CancellationToken cancellationToken = default)
@@ -96,12 +93,11 @@ namespace LogCentre.ApiClient
             return response;
         }
 
-        public async Task<ProviderModel> UpdateProviderAsync(ProviderModel provider, CancellationToken cancellationToken = default)
+        public async Task UpdateProviderAsync(ProviderModel provider, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("UpdateProviderAsync() | provider[{provider}]", provider);
             var uri = "provider";
-            var response = await PutAsync(uri, provider, cancellationToken);
-            return response;
+            await PutAsync(uri, provider, cancellationToken);
         }
 
         public async Task DeleteProviderAsync(long id, CancellationToken cancellationToken = default)
@@ -154,12 +150,11 @@ namespace LogCentre.ApiClient
             return response;
         }
 
-        public async Task<LogSourceModel> UpdateLogSourceAsync(LogSourceModel logSource, CancellationToken cancellationToken = default)
+        public async Task UpdateLogSourceAsync(LogSourceModel logSource, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("UpdateLogSourceAsync() | logFile[{logFile}]", logSource);
             var uri = "logFile";
-            var response = await PutAsync(uri, logSource, cancellationToken);
-            return response;
+            await PutAsync(uri, logSource, cancellationToken);
         }
 
         public async Task DeleteLogSourceAsync(long id, CancellationToken cancellationToken = default)
@@ -212,12 +207,11 @@ namespace LogCentre.ApiClient
             return response;
         }
 
-        public async Task<FileModel> UpdateLogFileAsync(FileModel logFile, CancellationToken cancellationToken = default)
+        public async Task UpdateLogFileAsync(FileModel logFile, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("UpdateLogFileAsync() | logFile[{logFile}]", logFile);
             var uri = "logfile";
-            var response = await PutAsync(uri, logFile, cancellationToken);
-            return response;
+            await PutAsync(uri, logFile, cancellationToken);
         }
 
         public async Task DeleteLogFileAsync(long id, CancellationToken cancellationToken = default)
@@ -270,12 +264,11 @@ namespace LogCentre.ApiClient
             return response;
         }
 
-        public async Task<LineModel> UpdateLogLineAsync(LineModel logFile, CancellationToken cancellationToken = default)
+        public async Task UpdateLogLineAsync(LineModel logFile, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("UpdateLogLineAsync() | logFile[{logFile}]", logFile);
             var uri = "logline";
-            var response = await PutAsync(uri, logFile, cancellationToken);
-            return response;
+            await PutAsync(uri, logFile, cancellationToken);
         }
 
         public async Task DeleteLogLineAsync(long id, CancellationToken cancellationToken = default)

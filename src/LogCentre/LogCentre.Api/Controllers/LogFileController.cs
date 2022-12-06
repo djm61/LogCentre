@@ -246,6 +246,7 @@ namespace LogCentre.Api.Controllers
 
                 entity.LogSourceId = model.LogSourceId;
                 entity.Name = model.Name;
+                entity.FileComplete = model.FileComplete;
                 entity.Active = model.Active;
                 entity.Deleted = model.Deleted;
                 entity.LastUpdatedBy = model.LastUpdatedBy;

@@ -77,7 +77,7 @@ void AddThreadingChannels(IServiceCollection serviceCollection)
 
 void AddHostModel(IServiceCollection serviceCollection, IConfiguration configuration)
 {
-    var hostModel = configuration.GetSection("Host").Get<HostModel>();
+    var hostModel = configuration.GetSection("Host").Get<HostIdModel>();
     if (hostModel == null)
     {
         throw new Exception("Missing Configuration Section: Host");

@@ -7,6 +7,7 @@ namespace LogCentre.Data.Entities.Log
         public File()
         {
             Name = string.Empty;
+            FileComplete = DataLiterals.No;
             Lines = new HashSet<Line>();
         }
 
@@ -17,6 +18,11 @@ namespace LogCentre.Data.Entities.Log
         [StringLength(DataLiterals.NameLength)]
         [MaxLength(DataLiterals.NameLength)]
         public string Name { get; set; }
+
+        [Required]
+        [StringLength(DataLiterals.FlagLength)]
+        [MaxLength(DataLiterals.FlagLength)]
+        public string FileComplete { get; set; }
 
         public LogSource LogSource { get; set; }
 

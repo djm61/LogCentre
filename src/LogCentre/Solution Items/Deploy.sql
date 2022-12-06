@@ -1,11 +1,11 @@
-/*
+
 drop table [Log].[Line];
 drop table [Log].[File];
 drop table [dbo].[LogSource];
 drop table [dbo].[Provider];
 drop table [dbo].[Host];
 drop schema [Log];
-*/
+
 
 if not exists (select 1 from sys.schemas where name = 'Log')
 begin
@@ -92,10 +92,12 @@ begin
 		[Id] bigint not null primary key identity,
 		[LogSourceId] bigint not null,
 		[Name] nvarchar(100) not null,
+		[FileComplete] nvarchar(1) not null default N'N',
 		[Active] nvarchar(1) not null default N'Y',
 		[Deleted] nvarchar(1) not null default N'N',
 		[LastUpdatedBy] nvarchar(256) not null,
 		[RowVersion] datetime not null default getutcdate(),
+		constraint CK_LogFile_FileComplete_YesNo check ([FileComplete] in (N'Y', N'N')),
 		constraint CK_LogFile_Active_YesNo check ([Active] in (N'Y', N'N')),
 		constraint CK_LogFile_Deleted_YesNo check ([Deleted] in (N'Y', N'N')),
 		foreign key ([LogSourceId]) references [dbo].[LogSource]([Id])

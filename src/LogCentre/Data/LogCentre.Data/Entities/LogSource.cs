@@ -8,7 +8,6 @@ namespace LogCentre.Data.Entities
     {
         public LogSource()
         {
-            LogLines = new HashSet<Line>();
             Files = new HashSet<Log.File>();
         }
 
@@ -30,7 +29,6 @@ namespace LogCentre.Data.Entities
 
         public Host Host { get; set; }
         public Provider Provider { get; set; }
-        public ICollection<Line> LogLines { get; set; }
         public ICollection<Log.File> Files { get; set; }
     }
 }

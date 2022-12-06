@@ -1,6 +1,6 @@
 ﻿namespace LogCentre.Console.Models
 {
-    internal class HostModel
+    internal class HostIdModel
     {
         public long HostId { get; set; }
     }

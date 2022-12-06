@@ -20,6 +20,12 @@ namespace LogCentre.Data.Configuration.Log
                 .HasMaxLength(DataLiterals.NameLength)
                 .HasDefaultValueSql("''");
 
+            builder.Property(t => t.FileComplete)
+                .IsRequired()
+                .IsUnicode()
+                .HasMaxLength(DataLiterals.FlagLength)
+                .HasDefaultValueSql("'N'");
+
             builder.HasOne(t => t.LogSource)
                 .WithMany(t => t.Files)
                 .HasForeignKey(t => t.LogSourceId)

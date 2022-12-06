@@ -32,45 +32,28 @@ namespace LogCentre.ApiClient.HttpClient
         protected async Task<T> GetAsync<T>(string uri, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("GetAsync() | uri[{uri}]", uri);
-            try
-            {
-                var response = await _httpClient.GetAsync(uri, cancellationToken);
-                response.EnsureSuccessStatusCode();
+            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            response.EnsureSuccessStatusCode();
 
-                await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-                return await JsonSerializer.DeserializeAsync<T>(responseStream, jsonSerializerOptions, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError($"Error [{ex}]", ex);
-                throw;
-            }
+            await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            return await JsonSerializer.DeserializeAsync<T>(responseStream, jsonSerializerOptions, cancellationToken);
         }
 
         protected async Task<T> PostAsync<T>(string uri, T data, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("PostAsync() | uri[{uri}], data[{data}]", uri, data);
-            var json = JsonSerializer.Serialize(data);
-            var dataItem = new StringContent(json, Encoding.UTF8, JsonContentType);
             var response = await _httpClient.PostAsJsonAsync(uri, data, jsonSerializerOptions, cancellationToken);
-            //var response = await _httpClient.PostAsync(uri, dataItem, cancellationToken);
             response.EnsureSuccessStatusCode();
-
-            var asdf1 = await response.Content.ReadAsStringAsync();
 
             await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
             return await JsonSerializer.DeserializeAsync<T>(responseStream, jsonSerializerOptions, cancellationToken);
         }
 
-        protected async Task<T> PutAsync<T>(string uri, T data, CancellationToken cancellationToken = default)
+        protected async Task PutAsync<T>(string uri, T data, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("PugAsync() | uri[{uri}], data[{data}]", uri, data);
-            var json = JsonSerializer.Serialize(data);
-            var dataItem = new StringContent(json, Encoding.UTF8, JsonContentType);
-            var response = await _httpClient.PutAsync(uri, dataItem, cancellationToken);
-
-            await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-            return await JsonSerializer.DeserializeAsync<T>(responseStream, jsonSerializerOptions, cancellationToken);
+            var response = await _httpClient.PutAsJsonAsync(uri, data, jsonSerializerOptions, cancellationToken);
+            response.EnsureSuccessStatusCode();
         }
 
         protected async Task DeleteAsync(string uri, CancellationToken cancellationToken = default)
