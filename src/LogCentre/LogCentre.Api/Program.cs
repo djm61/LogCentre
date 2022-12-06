@@ -78,10 +78,10 @@ if (string.IsNullOrWhiteSpace(connectionString))
 }
 builder.Services.AddDbContext<ILogCentreDbContext, LogCentreDbContext>(options =>
     options
-        .UseLoggerFactory(new LoggerFactory())
-        .UseSqlServer(connectionString)
-        .EnableDetailedErrors()
-        .EnableSensitiveDataLogging()
+    .UseSqlServer(connectionString)
+    .EnableDetailedErrors()
+    .EnableSensitiveDataLogging()
+    .UseLoggerFactory(new LoggerFactory())
 );
 
 builder.Services.AddControllers().AddJsonOptions(options =>

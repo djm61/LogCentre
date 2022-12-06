@@ -13,15 +13,13 @@ namespace LogCentre.Console
         private readonly ILogger<Consumer> _logger;
         private readonly ChannelReader<LineModel> _channelReader;
         private readonly ILogCentreApiClient _client;
-        private readonly long _hostId;
 
-        public Consumer(ILoggerFactory loggerFactory, ChannelReader<LineModel> channelReader, IHttpClientFactory clientFactory, HostModel hostModel)
+        public Consumer(ILoggerFactory loggerFactory, ChannelReader<LineModel> channelReader, IHttpClientFactory clientFactory)
         {
             _logger = loggerFactory?.CreateLogger<Consumer>() ?? throw new ArgumentNullException(nameof(loggerFactory));
             _channelReader = channelReader ?? throw new ArgumentNullException(nameof(channelReader));
             var client = clientFactory.CreateClient("LogCentreApiClient");
             if (client == null) { throw new ArgumentNullException(nameof(client)); }
-            _hostId = hostModel?.HostId ?? throw new ArgumentNullException(nameof(hostModel));
 
             var clientLogger = loggerFactory.CreateLogger<LogCentreApiClient>();
             _client = new LogCentreApiClient(clientLogger, client);

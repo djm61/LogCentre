@@ -10,9 +10,6 @@ namespace LogCentre.Data.Entities.Log
         }
 
         [Required]
-        public long LogSourceId { get; set; }
-
-        [Required]
         public long FileId { get; set; }
 
         [Required]
@@ -20,7 +17,8 @@ namespace LogCentre.Data.Entities.Log
         [MaxLength(DataLiterals.MaxLength)]
         public string LogLine { get; set; }
 
-        public LogSource LogSource { get; set; }
+        [Required]
+        public Guid Grouping { get; set; }
 
         public File File { get; set; }
     }

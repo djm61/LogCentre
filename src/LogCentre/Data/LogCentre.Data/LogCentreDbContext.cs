@@ -21,11 +21,13 @@ namespace LogCentre.Data
             _logger = loggerFactory.CreateLogger<LogCentreDbContext>();
         }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseLoggerFactory(_loggerFactory);
-        //    base.OnConfiguring(optionsBuilder);
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder
+                .UseLoggerFactory(_loggerFactory)
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors();
+        }
 
         #region Tables
 

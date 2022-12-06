@@ -1,11 +1,11 @@
-
+/*
 drop table [Log].[Line];
 drop table [Log].[File];
 drop table [dbo].[LogSource];
 drop table [dbo].[Provider];
 drop table [dbo].[Host];
 drop schema [Log];
-
+*/
 
 if not exists (select 1 from sys.schemas where name = 'Log')
 begin
@@ -115,6 +115,7 @@ begin
 		[Id] bigint not null primary key identity,
 		[FileId] bigint not null,
 		[LogLine] nvarchar(4000) not null,
+		[Grouping] uniqueidentifier not null,
 		[Active] nvarchar(1) not null default N'Y',
 		[Deleted] nvarchar(1) not null default N'N',
 		[LastUpdatedBy] nvarchar(256) not null,

@@ -24,6 +24,11 @@
         public string LogLine { get; set; }
 
         /// <summary>
+        /// Grouping of the log line
+        /// </summary>
+        public Guid Grouping { get; set; }
+
+        /// <summary>
         /// Referenced Log Source
         /// </summary>
         public FileModel? LogFile { get; set; }

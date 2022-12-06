@@ -2,9 +2,9 @@
 using LogCentre.Console.Models;
 using LogCentre.Model.Log;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
+using System.Text.RegularExpressions;
 using System.Threading.Channels;
 
 namespace LogCentre.Console
@@ -16,17 +16,8 @@ namespace LogCentre.Console
         private readonly ILogCentreApiClient _client;
         private readonly long _hostId;
 
-        //public Producer(ILoggerFactory loggerFactory, ChannelWriter<LineModel> channelWriter, IHttpClientFactory clientFactory, long hostId)
         public Producer(ILoggerFactory loggerFactory, ChannelWriter<LineModel> channelWriter, IHttpClientFactory clientFactory, HostModel hostModel)
         {
-            //_logger = loggerFactory?.CreateLogger<Producer>() ?? throw new ArgumentNullException(nameof(loggerFactory));
-            //_channelWriter = channelWriter ?? throw new ArgumentNullException(nameof(channelWriter));
-            //var client = clientFactory.CreateClient("LogCentreApiClient");
-            //if (client == null) { throw new ArgumentNullException(nameof(clientFactory)); }
-            //_hostId = hostId > 0 ? hostId : throw new ArgumentNullException(nameof(hostId));
-
-            //var clientLogger = loggerFactory.CreateLogger<LogCentreApiClient>();
-            //_client = new LogCentreApiClient(clientLogger, client);
             _logger = loggerFactory?.CreateLogger<Producer>() ?? throw new ArgumentNullException(nameof(loggerFactory));
             _channelWriter = channelWriter ?? throw new ArgumentNullException(nameof(channelWriter));
             var client = clientFactory.CreateClient("LogCentreApiClient");
@@ -46,8 +37,12 @@ namespace LogCentre.Console
                 var logSources = await _client.GetLogSourcesByHostAsync(_hostId);
                 var task = Task.Factory.StartNew(async () =>
                 {
+                    Regex regex;
                     foreach (var logSource in logSources)
                     {
+                        var provider = logSource.Provider;
+                        //todo error checking!
+                        regex = new Regex(provider.Regex);
                         try
                         {
                             var fileModels = await _client.GetFilesByLogSourceIdAsync(logSource.Id);
@@ -59,11 +54,21 @@ namespace LogCentre.Console
                                 if (fileModel == null)
                                 {
                                     //we don't have the file, read it!
-                                    fileModel = new FileModel();
-                                    fileModel.LogSourceId = logSource.Id;
-                                    fileModel.Name = file.Name;
-                                    fileModel.LastUpdatedBy = $"Producer-{logSource.HostId}";
+                                    fileModel = new FileModel
+                                    {
+                                        LogSourceId = logSource.Id,
+                                        Name = file.Name,
+                                        LastUpdatedBy = $"Producer-{_hostId}"
+                                    };
+
                                     await _client.CreateLogFileAsync(fileModel);
+                                    fileModels = await _client.GetFilesByLogSourceIdAsync(logSource.Id);
+                                    fileModel = fileModels.FirstOrDefault(x => x.Name == file.Name);
+                                    if (fileModel == null)
+                                    {
+                                        _logger.LogError("Unable to read back the file that was just created, what?");
+                                        continue;
+                                    }
                                 }
 
                                 //todo check if file is already fully read, if yes, skip file, if no, find last read line and then read from there (line count maybe?)
@@ -74,13 +79,23 @@ namespace LogCentre.Console
                                     continue;
                                 }
 
+                                var grouping = Guid.NewGuid();
                                 foreach (var line in lines)
                                 {
-                                    var logLine = new LineModel();
-                                    logLine.FileId = fileModel.Id;
-                                    logLine.LogLine = line;
-                                    logLine.LastUpdatedBy = $"Producer-{logSource.HostId}";
+                                    var matches = regex.Matches(line);
+                                    var logLine = new LineModel
+                                    {
+                                        FileId = fileModel.Id,
+                                        LogLine = line,
+                                        Grouping = grouping,
+                                        LastUpdatedBy = $"Producer-{_hostId}"
+                                    };
+
                                     await _channelWriter.WriteAsync(logLine);
+                                    if (matches.Count() > 0)
+                                    {
+                                        grouping = Guid.NewGuid();
+                                    }
                                 }
                             }
                         }

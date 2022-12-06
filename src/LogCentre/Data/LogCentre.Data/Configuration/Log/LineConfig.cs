@@ -13,20 +13,14 @@ namespace LogCentre.Data.Configuration.Log
 
             builder.ToTable("Line", "log");
 
-            builder.Property(t => t.LogSourceId)
-                .IsRequired();
-
             builder.Property(t => t.LogLine)
                 .IsRequired()
                 .IsUnicode()
                 .HasMaxLength(DataLiterals.MaxLength)
                 .HasDefaultValueSql("''");
 
-            builder.HasOne(t => t.LogSource)
-                .WithMany(t => t.LogLines)
-                .HasForeignKey(t => t.LogSourceId)
-                .HasConstraintName("FK_Line_LogSourceId")
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.Property(t => t.Grouping)
+                .IsRequired();
 
             builder.HasOne(t => t.File)
                 .WithMany(t => t.Lines)

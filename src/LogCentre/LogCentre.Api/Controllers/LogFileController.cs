@@ -203,7 +203,7 @@ namespace LogCentre.Api.Controllers
                 model = _mapper.Map<Data.Entities.Log.File, FileModel>(entity);
                 return CreatedAtAction(nameof(GetFileById), new { id = entity.Id }, model);
             }
-            catch (LineException he)
+            catch (FileException he)
             {
                 return HandleBadRequest("Error creating new File", he.Message);
             }
@@ -254,7 +254,7 @@ namespace LogCentre.Api.Controllers
 
                 return NoContent();
             }
-            catch (LineException he)
+            catch (FileException he)
             {
                 return HandleBadRequest("Error updating File", he.Message);
             }
@@ -304,7 +304,7 @@ namespace LogCentre.Api.Controllers
 
                 return NoContent();
             }
-            catch (LineException he)
+            catch (FileException he)
             {
                 return HandleBadRequest("Error deleting File", he.Message);
             }
@@ -322,7 +322,7 @@ namespace LogCentre.Api.Controllers
         /// <summary>
         /// Remove a File and all its dependencies if it has been soft deleted
         /// </summary>
-        /// <param name="id">The Line id</param>
+        /// <param name="id">The File id</param>
         [HttpDelete("{id:long}/purge")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
