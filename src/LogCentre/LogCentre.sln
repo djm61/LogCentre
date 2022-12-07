@@ -30,7 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumer", "Consumer", "{E5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogCentre.Console", "Consumer\LogCentre.Console\LogCentre.Console.csproj", "{9E0A83D8-3296-4CC9-A317-F15808A13B2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogCentre.Web", "LogCentre.Web\LogCentre.Web.csproj", "{0DE0CF2D-5CD6-4C72-84EB-EA74353F5193}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogCentre.Web", "LogCentre.Web\LogCentre.Web.csproj", "{0DE0CF2D-5CD6-4C72-84EB-EA74353F5193}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -22,7 +22,7 @@ namespace LogCentre.Data.Entities
         [Required]
         [StringLength(DataLiterals.LastUpdatedByLength)]
         [MaxLength(DataLiterals.LastUpdatedByLength)]
-        public string LastUpdatedBy { get; set; }
+        public string LastUpdatedBy { get; set; } = string.Empty;
 
         [Required]
         public DateTime RowVersion { get; set; }
