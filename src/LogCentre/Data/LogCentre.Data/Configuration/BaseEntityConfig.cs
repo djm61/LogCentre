@@ -17,13 +17,13 @@ namespace LogCentre.Data.Configuration
                 .IsRequired()
                 .IsUnicode()
                 .HasMaxLength(DataLiterals.FlagLength)
-                .HasDefaultValueSql("''");
+                .HasDefaultValueSql("N'Y'");
 
             builder.Property(t => t.Deleted)
                 .IsRequired()
                 .IsUnicode()
                 .HasMaxLength(DataLiterals.FlagLength)
-                .HasDefaultValueSql("''");
+                .HasDefaultValueSql("N'Y'");
 
             builder.Property(t => t.LastUpdatedBy)
                 .IsRequired()

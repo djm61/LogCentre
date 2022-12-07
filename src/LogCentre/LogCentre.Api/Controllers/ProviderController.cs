@@ -209,6 +209,7 @@ namespace LogCentre.Api.Controllers
 
                 entity.Name = model.Name;
                 entity.Description = model.Description;
+                entity.Regex = model.Regex;
                 entity.Active = model.Active;
                 entity.Deleted = model.Deleted;
                 entity.LastUpdatedBy = model.LastUpdatedBy;
