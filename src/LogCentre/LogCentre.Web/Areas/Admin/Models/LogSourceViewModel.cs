@@ -45,8 +45,13 @@ namespace LogCentre.Web.Areas.Admin.Models
         public HostModel? Host { get; set; }
         public ProviderModel? Provider { get; set; }
 
-        public SelectList? HostSelectList { get; set; }
+        public SelectList HostSelectList { get; set; }
 
-        public SelectList? ProviderSelectList { get; set; }
+        public SelectList ProviderSelectList { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id[{Id}], HostId[{HostId}], ProviderId[{ProviderId}], Name[{Name}], Path[{Path}], Active[{Active}], Deleted:[{Deleted}], {base.ToString()}";
+        }
     }
 }
