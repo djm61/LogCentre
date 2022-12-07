@@ -30,5 +30,10 @@ namespace LogCentre.Data.Entities
         public Host Host { get; set; }
         public Provider Provider { get; set; }
         public ICollection<Log.File> Files { get; set; }
+
+        public override string ToString()
+        {
+            return $"HostId[{HostId}], ProviderId[{ProviderId}], Name[{Name}], Path[{Path}], {base.ToString()}";
+        }
     }
 }

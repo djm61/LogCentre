@@ -21,5 +21,10 @@ namespace LogCentre.Data.Entities.Log
         public Guid Grouping { get; set; }
 
         public File File { get; set; }
+
+        public override string ToString()
+        {
+            return $"FileId[{FileId}], Grouping[{Grouping}], {base.ToString()}";
+        }
     }
 }

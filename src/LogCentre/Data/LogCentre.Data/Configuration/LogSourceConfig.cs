@@ -32,13 +32,13 @@ namespace LogCentre.Data.Configuration
                 .HasDefaultValueSql("''");
 
             builder.HasOne(t => t.Host)
-                .WithMany(t => t.Sources)
+                .WithMany(t => t.LogSources)
                 .HasForeignKey(t => t.HostId)
                 .HasConstraintName("FK_LogSource_HostId")
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.HasOne(t => t.Provider)
-                .WithMany(t => t.Sources)
+                .WithMany(t => t.LogSources)
                 .HasForeignKey(t => t.ProviderId)
                 .HasConstraintName("FK_LogSource_ProviderId")
                 .OnDelete(DeleteBehavior.ClientSetNull);

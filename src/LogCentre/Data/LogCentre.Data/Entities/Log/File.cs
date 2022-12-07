@@ -27,5 +27,10 @@ namespace LogCentre.Data.Entities.Log
         public LogSource LogSource { get; set; }
 
         public ICollection<Line> Lines { get; set; }
+
+        public override string ToString()
+        {
+            return $"LogSourceId[{LogSourceId}], Name[{Name}], FileComplete[{FileComplete}], {base.ToString()}";
+        }
     }
 }

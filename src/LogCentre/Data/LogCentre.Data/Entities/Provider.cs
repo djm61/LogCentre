@@ -17,6 +17,11 @@ namespace LogCentre.Data.Entities
         [MaxLength(DataLiterals.RegexLength)]
         public string Regex { get; set; }
 
-        public ICollection<LogSource> Sources { get; set; } = new HashSet<LogSource>();
+        public ICollection<LogSource> LogSources { get; set; } = new HashSet<LogSource>();
+
+        public override string ToString()
+        {
+            return $"Name[{Name}], Description[{Description}], Regex[{Regex}], SourceCount[{LogSources.Count}]";
+        }
     }
 }

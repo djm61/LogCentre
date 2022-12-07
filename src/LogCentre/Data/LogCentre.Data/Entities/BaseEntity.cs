@@ -26,5 +26,10 @@ namespace LogCentre.Data.Entities
 
         [Required]
         public DateTime RowVersion { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id[{Id}], Active[{Active}], Deleted[{Deleted}], LastUpdated[{LastUpdatedBy}], RowVersion[{RowVersion:yyyy-MM-dd HH:mm:ss.fff}], {base.ToString}";
+        }
     }
 }
