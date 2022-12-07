@@ -31,11 +31,7 @@ builder.Services.AddLogging();
 AddHttpClientFactory(builder.Services, configuration);
 AddRenderService(builder.Services);
 
-builder.Services.AddControllersWithViews().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-});
+builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();

@@ -1,0 +1,36 @@
+﻿@page
+@model LogCentre.Web.Areas.Admin.Pages.LogSource.IndexModel
+@{
+    ViewData["Title"] = "Log Sources";
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="col-sm-12" style="padding: 20px">
+        <a onclick="jQueryModalGet('?handler=CreateOrEdit','Create Log Source')" class="btn bg-success">
+            Create
+        </a>
+        <a id="reload" class="btn bg-warning">
+            Reload
+        </a>
+    </div>
+    <div id="viewAll" class="card-body table-responsive"></div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadData();
+
+            $('#reload').on('click', function () {
+                loadData();
+            });
+        });
+
+        function loadData() {
+            window.console.log('loadData()');
+            $('#viewAll').empty().html('<div><div class="spinner-border text-dark" role="status"><span class="sr-only"></span></div>Loading...</div>');
+            $('#viewAll').load('?handler=ViewAllPartial');
+        }
+    </script>
+}

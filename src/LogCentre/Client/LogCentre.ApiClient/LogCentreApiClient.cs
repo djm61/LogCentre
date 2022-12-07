@@ -158,7 +158,7 @@ namespace LogCentre.ApiClient
         public async Task UpdateLogSourceAsync(LogSourceModel logSource, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("UpdateLogSourceAsync() | logFile[{logFile}]", logSource);
-            var uri = "logFile";
+            var uri = "logsource";
             await PutAsync(uri, logSource, cancellationToken);
         }
 
