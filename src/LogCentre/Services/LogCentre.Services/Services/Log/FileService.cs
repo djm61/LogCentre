@@ -1,6 +1,4 @@
 ﻿using LogCentre.Data;
-using LogCentre.Data.Entities.Log;
-using LogCentre.Data.Interfaces;
 using LogCentre.Services.Exceptions;
 using LogCentre.Services.Interfaces.Log;
 
@@ -14,8 +12,8 @@ namespace LogCentre.Services.Services.Log
     public class FileService : AbstractService<FileService, Data.Entities.Log.File, long>, IFileService
     {
         public FileService(ILogger<FileService> logger,
-            ILogCentreDbContext dbContext)
-            : base(logger, dbContext)
+            IDbContextFactory<LogCentreDbContext> dbContextFactory)
+            : base(logger, dbContextFactory)
         {
         }
 

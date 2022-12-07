@@ -1,6 +1,8 @@
 using LogCentre.Api;
+using LogCentre.Api.Helpers;
 using LogCentre.Api.Middleware;
 using LogCentre.Api.Models;
+using LogCentre.BackgroundServices;
 using LogCentre.Data;
 using LogCentre.Data.Interfaces;
 using LogCentre.SeedData;
@@ -38,12 +40,17 @@ builder.Services.AddLogging();
 
 builder.Services.AddAutoMapper(typeof(LogCentreAutoMapperProfile));
 
+//background settings
+var backgroundServiceSettings = builder.Configuration.GetSection("BackgroundServiceSettings").Get<LogBackgroundServiceSettings>();
+if (backgroundServiceSettings == null) throw new Exception("Missing Configuration Section: BackgroundServiceSettings");
+builder.Services.AddSingleton(backgroundServiceSettings);
+//caching settings
+var cachingSettings = builder.Configuration.GetSection("CachingSettings").Get<CachingSettings>();
+if (cachingSettings == null) throw new Exception("Missing Configuration Section: CachingSettings");
+builder.Services.AddDistributedCache(cachingSettings);
+
 // Add services to the container.
-builder.Services.AddTransient<IHostService, HostService>();
-builder.Services.AddTransient<IProviderService, ProviderService>();
-builder.Services.AddTransient<ILogSourceService, LogSourceService>();
-builder.Services.AddTransient<IFileService, FileService>();
-builder.Services.AddTransient<ILineService, LineService>();
+AddEntityServices(builder.Services);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -71,18 +78,11 @@ builder.Services.AddSwaggerGen(s =>
     }
 });
 
-var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
-if (string.IsNullOrWhiteSpace(connectionString))
-{
-    throw new ApplicationException("Invalid SQL Connection String");
-}
-builder.Services.AddDbContext<ILogCentreDbContext, LogCentreDbContext>(options =>
-    options
-    .UseSqlServer(connectionString)
-    .EnableDetailedErrors()
-    .EnableSensitiveDataLogging()
-    .UseLoggerFactory(new LoggerFactory())
-);
+AddLogCentreDbContext(builder);
+
+//background service
+builder.Services.AddSingleton<LogBackgroundService>();
+builder.Services.AddHostedService<LogBackgroundService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -150,10 +150,33 @@ InitializeDatabase(app);
 
 app.Run();
 
+void AddEntityServices(IServiceCollection serviceCollection)
+{
+    serviceCollection.AddTransient<IHostService, HostService>();
+    serviceCollection.AddTransient<IProviderService, ProviderService>();
+    serviceCollection.AddTransient<ILogSourceService, LogSourceService>();
+    serviceCollection.AddTransient<IFileService, FileService>();
+    serviceCollection.AddTransient<ILineService, LineService>();
+}
+
+void AddLogCentreDbContext(WebApplicationBuilder webApplicationBuilder)
+{
+    var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
+    if (string.IsNullOrWhiteSpace(connectionString)) throw new ApplicationException("Invalid SQL Connection String");
+    webApplicationBuilder.Services.AddDbContextFactory<LogCentreDbContext>(optionsAction: options =>
+        options
+            .UseSqlServer(connectionString)
+            .EnableDetailedErrors()
+            .EnableSensitiveDataLogging()
+            .UseLoggerFactory(new LoggerFactory())
+    , lifetime: ServiceLifetime.Transient);
+}
+
 void InitializeDatabase(IApplicationBuilder app)
 {
     using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
-    var context = serviceScope.ServiceProvider.GetRequiredService<LogCentreDbContext>();
+    var contextFactory = serviceScope.ServiceProvider.GetRequiredService<IDbContextFactory<LogCentreDbContext>>();
+    var context = contextFactory.CreateDbContext();
     context.Database.EnsureCreated();
     //var script = context.Database.GenerateCreateScript();
     context.Database.Migrate();

@@ -16,8 +16,8 @@ namespace LogCentre.Services.Services
         private const string IncludeTables = "Host,Provider";
 
         public LogSourceService(ILogger<LogSourceService> logger,
-            ILogCentreDbContext dbContext)
-            : base(logger, dbContext)
+            IDbContextFactory<LogCentreDbContext> dbContextFactory)
+            : base(logger, dbContextFactory)
         {
         }
 

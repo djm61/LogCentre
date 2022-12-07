@@ -14,14 +14,15 @@ namespace LogCentre.Services
     public abstract class AbstractService<TService, TEntity, TKey> where TEntity : BaseEntity
     {
         protected readonly ILogger<TService> Logger;
-        protected readonly ILogCentreDbContext DbContext;
+        protected readonly LogCentreDbContext DbContext;
         protected readonly DbSet<TEntity> DbSet;
 
         protected AbstractService(ILogger<TService> logger,
-            ILogCentreDbContext dbContext)
+            IDbContextFactory<LogCentreDbContext> dbContextFactory)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            DbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            var dbContext = dbContextFactory?.CreateDbContext() ?? throw new ArgumentNullException(nameof(dbContextFactory));
+            DbContext= dbContext;
             DbSet = dbContext.Set<TEntity>();
         }
 

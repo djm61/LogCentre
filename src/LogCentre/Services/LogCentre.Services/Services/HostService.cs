@@ -14,8 +14,8 @@ namespace LogCentre.Services.Services
     public class HostService : AbstractService<HostService, Host, long>, IHostService
     {
         public HostService(ILogger<HostService> logger,
-            ILogCentreDbContext dbContext)
-            : base(logger, dbContext)
+            IDbContextFactory<LogCentreDbContext> dbContextFactory)
+            : base(logger, dbContextFactory)
         {
         }
 

@@ -1,6 +1,5 @@
 ﻿using LogCentre.Data;
 using LogCentre.Data.Entities;
-using LogCentre.Data.Interfaces;
 using LogCentre.Services.Exceptions;
 using LogCentre.Services.Interfaces;
 
@@ -14,8 +13,8 @@ namespace LogCentre.Services.Services
     public class ProviderService : AbstractService<ProviderService, Provider, long>, IProviderService
     {
         public ProviderService(ILogger<ProviderService> logger,
-            ILogCentreDbContext dbContext)
-            : base(logger, dbContext)
+            IDbContextFactory<LogCentreDbContext> dbContextFactory)
+            : base(logger, dbContextFactory)
         {
         }
 

@@ -15,8 +15,8 @@ namespace LogCentre.Services.Services.Log
     public class LineService : AbstractService<LineService, Line, long>, ILineService
     {
         public LineService(ILogger<LineService> logger,
-            ILogCentreDbContext dbContext)
-            : base(logger, dbContext)
+            IDbContextFactory<LogCentreDbContext> dbContextFactory)
+            : base(logger, dbContextFactory)
         {
         }
 
