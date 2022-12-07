@@ -18,11 +18,11 @@ namespace LogCentre.Console
         {
             _logger = loggerFactory?.CreateLogger<Consumer>() ?? throw new ArgumentNullException(nameof(loggerFactory));
             _channelReader = channelReader ?? throw new ArgumentNullException(nameof(channelReader));
-            var client = clientFactory.CreateClient("LogCentreApiClient");
-            if (client == null) { throw new ArgumentNullException(nameof(client)); }
+            //var client = clientFactory.CreateClient("LogCentreApiClient");
+            //if (client == null) { throw new ArgumentNullException(nameof(client)); }
 
             var clientLogger = loggerFactory.CreateLogger<LogCentreApiClient>();
-            _client = new LogCentreApiClient(clientLogger, client);
+            _client = new LogCentreApiClient(clientLogger, clientFactory, "LogCentreApiClient");
         }
 
         public async Task StartAsync()

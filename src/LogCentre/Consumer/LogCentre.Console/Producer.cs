@@ -22,12 +22,12 @@ namespace LogCentre.Console
         {
             _logger = loggerFactory?.CreateLogger<Producer>() ?? throw new ArgumentNullException(nameof(loggerFactory));
             _channelWriter = channelWriter ?? throw new ArgumentNullException(nameof(channelWriter));
-            var client = clientFactory.CreateClient("LogCentreApiClient");
-            if (client == null) { throw new ArgumentNullException(nameof(client)); }
+            //var client = clientFactory.CreateClient("LogCentreApiClient");
+            //if (client == null) { throw new ArgumentNullException(nameof(client)); }
             _hostId = hostIdModel?.HostId ?? throw new ArgumentNullException(nameof(hostIdModel));
 
             var clientLogger = loggerFactory.CreateLogger<LogCentreApiClient>();
-            _client = new LogCentreApiClient(clientLogger, client);
+            _client = new LogCentreApiClient(clientLogger, clientFactory, "LogCentreApiClient");
         }
 
         public async Task StartAsync()
@@ -82,7 +82,7 @@ namespace LogCentre.Console
                                 await _client.UpdateLogFileAsync(fileModel);
                             }
 
-                            //todo create a file system watcher
+                            //todo create a file system watcher for the last file to keep reading the file
                         }
                         catch (Exception ex)
                         {

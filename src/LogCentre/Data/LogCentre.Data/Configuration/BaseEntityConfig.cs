@@ -34,7 +34,7 @@ namespace LogCentre.Data.Configuration
             builder.Property(t => t.RowVersion)
                 .IsRequired()
                 .IsRowVersion()
-                .ValueGeneratedOnAddOrUpdate()
+                //.ValueGeneratedOnAddOrUpdate()
                 .HasDefaultValueSql("(getutcdate())")  //sql server utc date
                 //.HasColumnType("timestamp")  //mysql server utc date
                 ;

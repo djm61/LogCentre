@@ -8,8 +8,13 @@ namespace LogCentre.ApiClient
 {
     public class LogCentreApiClient : JsonApiClient<LogCentreApiClient>, ILogCentreApiClient
     {
-        public LogCentreApiClient(ILogger<LogCentreApiClient> logger, System.Net.Http.HttpClient httpClient)
-            : base(logger, httpClient)
+        //public LogCentreApiClient(ILogger<LogCentreApiClient> logger, System.Net.Http.HttpClient httpClient)
+        //    : base(logger, httpClient)
+        //{
+        //}
+
+        public LogCentreApiClient(ILogger<LogCentreApiClient> logger, IHttpClientFactory clientFactory, string clientName = "LogCentreApiClient")
+            : base(logger, clientFactory, clientName)
         {
         }
 

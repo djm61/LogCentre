@@ -116,7 +116,7 @@ namespace LogCentre.Services
             }
         }
 
-        public async Task UpdateAsync(TEntity entity)
+        public async virtual Task UpdateAsync(TEntity entity)
         {
             Logger.LogDebug("UpdateAsync() | entity[{entity}]", entity);
 

@@ -200,8 +200,11 @@ namespace LogCentre.Api.Controllers
                 entity.LastUpdatedBy = model.LastUpdatedBy;
 
                 await _hostService.UpdateAsync(entity);
-
                 return NoContent();
+            }
+            catch (EntityException ee)
+            {
+                return HandleBadRequest("Error updating Host", ee.Message);
             }
             catch (HostException he)
             {
@@ -250,7 +253,6 @@ namespace LogCentre.Api.Controllers
                 }
 
                 await _hostService.DeleteAsync(entity);
-
                 return NoContent();
             }
             catch (HostException he)

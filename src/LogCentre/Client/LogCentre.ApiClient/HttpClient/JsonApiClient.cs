@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace LogCentre.ApiClient.HttpClient
 {
@@ -24,6 +25,19 @@ namespace LogCentre.ApiClient.HttpClient
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", "LogCentreApiClient");
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+
+        public JsonApiClient(ILogger<T> logger, IHttpClientFactory clientFactory, string clientName = "")
+        {
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            var cf = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            _httpClient = string.IsNullOrWhiteSpace(clientName)
+                ? clientFactory.CreateClient()
+                : clientFactory.CreateClient(clientName);
+
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "LogCentreApiClient");
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -52,7 +66,10 @@ namespace LogCentre.ApiClient.HttpClient
         protected async Task PutAsync<T>(string uri, T data, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("PugAsync() | uri[{uri}], data[{data}]", uri, data);
-            var response = await _httpClient.PutAsJsonAsync(uri, data, jsonSerializerOptions, cancellationToken);
+            var json = JsonSerializer.Serialize(data, jsonSerializerOptions);
+            var dataItem = new StringContent(json, Encoding.UTF8, "application/json");
+            //var response = await _httpClient.PutAsJsonAsync(uri, data, jsonSerializerOptions, cancellationToken);
+            var response = await _httpClient.PutAsync(uri, dataItem);
             response.EnsureSuccessStatusCode();
         }
 
