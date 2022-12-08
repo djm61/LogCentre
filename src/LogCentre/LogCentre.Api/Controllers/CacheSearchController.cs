@@ -1,9 +1,9 @@
 ﻿using LogCentre.Api.Attributes;
+using LogCentre.Api.Models;
 using LogCentre.Model;
-using LogCentre.Services.Exceptions;
 using LogCentre.Services.Interfaces;
-using LogCentre.Services.Services;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Diagnostics;
@@ -13,6 +13,10 @@ namespace LogCentre.Api.Controllers
     /// <summary>
     /// Cache Search Controller
     /// </summary>
+    [Authorize]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiController]
     public class CacheSearchController : BaseApiController<CacheSearchController>
     {
         private readonly ICacheSearchService _cacheSearchService;
@@ -37,8 +41,8 @@ namespace LogCentre.Api.Controllers
         /// </summary>
         /// <param name="dataItem">JSON search string</param>
         /// <returns>list of search results</returns>
-        [HttpGet("{dataItem:string}", Name = nameof(GetCacheResults)), Benchmark]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<HostModel>))]
+        [HttpGet("{dataItem}", Name = nameof(GetCacheResults)), Benchmark]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<CacheItemModel>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCacheResults(string dataItem)
         {

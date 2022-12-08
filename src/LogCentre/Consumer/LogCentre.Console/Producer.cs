@@ -149,16 +149,22 @@ namespace LogCentre.Console
                     continue;
                 }
 
-                var matches = regex.Matches(line);
-                if (matches.Count() > 0)
+                var matches = regex.Match(line);
+                if (matches.Success)
                 {
                     grouping = Guid.NewGuid();
                 }
 
+                _ = DateTime.TryParse(matches.Groups["Date"].Value, out var date);
                 var logLine = new LineModel
                 {
                     FileId = fileModel.Id,
-                    LogLine = line,
+                    LogDate = date,
+                    Level = matches.Groups["Level"]?.Value ?? string.Empty,
+                    Thread = matches.Groups["Thread"]?.Value ?? string.Empty,
+                    Source = matches.Groups["Source"]?.Value ?? string.Empty,
+                    LogLine = matches.Groups["Text"]?.Value ?? string.Empty,
+                    FullLine = line,
                     Grouping = grouping,
                     LastUpdatedBy = $"Producer-{_hostId}"
                 };

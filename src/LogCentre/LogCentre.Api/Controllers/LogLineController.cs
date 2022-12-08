@@ -129,6 +129,11 @@ namespace LogCentre.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets all lines for the Log File Id
+        /// </summary>
+        /// <param name="id">Id of the log file</param>
+        /// <returns>List of all log lines</returns>
         [HttpGet("file/{id:long}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<LineModel>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -161,6 +166,11 @@ namespace LogCentre.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Get the count of all log lines for a log file
+        /// </summary>
+        /// <param name="fileId">File Id</param>
+        /// <returns>int of the count of log lines</returns>
         [HttpGet("file/{fileId:long}/count")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<LineModel>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -271,7 +281,13 @@ namespace LogCentre.Api.Controllers
                 }
 
                 entity.FileId = model.FileId;
+                entity.LogDate = model.LogDate;
+                entity.Level = model.Level;
+                entity.Thread = model.Thread;
+                entity.Source = model.Source;
                 entity.LogLine = model.LogLine;
+                entity.FullLine = model.FullLine;
+                entity.Grouping = model.Grouping;
                 entity.Active = model.Active;
                 entity.Deleted = model.Deleted;
                 entity.LastUpdatedBy = model.LastUpdatedBy;

@@ -13,11 +13,36 @@ namespace LogCentre.Data.Configuration.Log
 
             builder.ToTable("Line", "log");
 
+            builder.Property(t => t.LogDate);
+
+            builder.Property(t => t.Level)
+                .IsRequired()
+                .IsUnicode()
+                .HasMaxLength(DataLiterals.NameLength)
+                .HasDefaultValue("''");
+
+            builder.Property(t => t.Thread)
+                .IsUnicode()
+                .HasMaxLength(DataLiterals.NameLength)
+                .HasDefaultValue("''");
+
+            builder.Property(t => t.Source)
+                .IsRequired()
+                .IsUnicode()
+                .HasMaxLength(DataLiterals.DescriptionLength)
+                .HasDefaultValue("''");
+
             builder.Property(t => t.LogLine)
                 .IsRequired()
                 .IsUnicode()
                 .HasMaxLength(DataLiterals.MaxLength)
                 .HasDefaultValueSql("''");
+
+            builder.Property(t => t.FullLine)
+                .IsRequired()
+                .IsUnicode()
+                .HasMaxLength(DataLiterals.MaxLength)
+                .HasDefaultValue("''");
 
             builder.Property(t => t.Grouping)
                 .IsRequired();

@@ -116,7 +116,12 @@ begin
 	create table [Log].[Line] (
 		[Id] bigint not null primary key identity,
 		[FileId] bigint not null,
+		[LogDate] datetime not null,
+		[Level] nvarchar(100) not null default N'',
+		[Thread] nvarchar(100) not null default N'',
+		[Source] nvarchar(1000) not null default N'',
 		[LogLine] nvarchar(4000) not null,
+		[FullLine] nvarchar(4000) not null,
 		[Grouping] uniqueidentifier not null,
 		[Active] nvarchar(1) not null default N'Y',
 		[Deleted] nvarchar(1) not null default N'N',
