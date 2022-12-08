@@ -141,6 +141,10 @@ namespace LogCentre.Console
             _logger.LogDebug("CreateLineAsync() | linesCount[{0}]", lines.Count);
             var currentRow = 0;
             var grouping = Guid.NewGuid();
+            var date = DateTime.UtcNow;
+            var level = string.Empty;
+            var thread = string.Empty;
+            var source = string.Empty;
             foreach (var line in lines)
             {
                 if (lineCount > 0 && lineCount < lines.Count && currentRow < lineCount)
@@ -153,16 +157,19 @@ namespace LogCentre.Console
                 if (matches.Success)
                 {
                     grouping = Guid.NewGuid();
+                    _ = DateTime.TryParse(matches.Groups["Date"].Value, out date);
+                    level = matches.Groups["Level"]?.Value ?? string.Empty;
+                    thread = matches.Groups["Thread"]?.Value ?? string.Empty;
+                    source = matches.Groups["Source"]?.Value ?? string.Empty;
                 }
 
-                _ = DateTime.TryParse(matches.Groups["Date"].Value, out var date);
                 var logLine = new LineModel
                 {
                     FileId = fileModel.Id,
                     LogDate = date,
-                    Level = matches.Groups["Level"]?.Value ?? string.Empty,
-                    Thread = matches.Groups["Thread"]?.Value ?? string.Empty,
-                    Source = matches.Groups["Source"]?.Value ?? string.Empty,
+                    Level = level,
+                    Thread = thread,
+                    Source = source,
                     LogLine = matches.Groups["Text"]?.Value ?? string.Empty,
                     FullLine = line,
                     Grouping = grouping,
