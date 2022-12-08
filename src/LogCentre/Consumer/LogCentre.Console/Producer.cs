@@ -5,7 +5,6 @@ using LogCentre.Model.Log;
 
 using Microsoft.Extensions.Logging;
 
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Channels;
 
@@ -18,12 +17,13 @@ namespace LogCentre.Console
         private readonly ILogCentreApiClient _client;
         private readonly long _hostId;
 
-        public Producer(ILoggerFactory loggerFactory, ChannelWriter<LineModel> channelWriter, IHttpClientFactory clientFactory, HostIdModel hostIdModel)
+        public Producer(ILoggerFactory loggerFactory,
+            ChannelWriter<LineModel> channelWriter,
+            IHttpClientFactory clientFactory,
+            HostIdModel hostIdModel)
         {
             _logger = loggerFactory?.CreateLogger<Producer>() ?? throw new ArgumentNullException(nameof(loggerFactory));
             _channelWriter = channelWriter ?? throw new ArgumentNullException(nameof(channelWriter));
-            //var client = clientFactory.CreateClient("LogCentreApiClient");
-            //if (client == null) { throw new ArgumentNullException(nameof(client)); }
             _hostId = hostIdModel?.HostId ?? throw new ArgumentNullException(nameof(hostIdModel));
 
             var clientLogger = loggerFactory.CreateLogger<LogCentreApiClient>();
@@ -43,13 +43,23 @@ namespace LogCentre.Console
                     foreach (var logSource in logSources)
                     {
                         var provider = logSource.Provider;
-                        //todo error checking!
+                        if (provider == null)
+                        {
+                            _logger.LogWarning("StartAsync() thread | logSource[{0}] doesn't have a provider", logSource.Id);
+                            continue;
+                        }
+
+                        if (string.IsNullOrWhiteSpace(provider.Regex))
+                        {
+                            _logger.LogWarning("StartAsync() thread | provider[{0}] doesn't have a regex", provider.Id);
+                            continue;
+                        }
+
                         regex = new Regex(provider.Regex);
                         try
                         {
                             var fileModels = await _client.GetFilesByLogSourceIdAsync(logSource.Id);
                             var directory = new DirectoryInfo(logSource.Path);
-                            //todo sort by oldest first
                             foreach (var file in directory.GetFiles().OrderBy(x => x.LastWriteTime))
                             {
                                 var fileModel = await GetOrCreateFileModelAsync(fileModels, logSource, file);

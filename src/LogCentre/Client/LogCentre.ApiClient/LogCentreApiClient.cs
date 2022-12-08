@@ -1,8 +1,12 @@
 ﻿using LogCentre.ApiClient.HttpClient;
 using LogCentre.Model;
+using LogCentre.Model.Cache;
 using LogCentre.Model.Log;
 
 using Microsoft.Extensions.Logging;
+
+using System.Text.Json;
+using System.Text;
 
 namespace LogCentre.ApiClient
 {
@@ -288,6 +292,20 @@ namespace LogCentre.ApiClient
             Logger.LogDebug("PurgeLogLineAsync() | id[{id}]", id);
             var uri = $"logline/{id}/purge";
             await DeleteAsync(uri, cancellationToken);
+        }
+
+        #endregion
+
+        #region Cache Searching
+
+        public async Task<IList<CacheItemModel>> GetItensForSearchingAsync(string searchText, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("GetItemsForSearchingAsync() | searchText[{searchText}]", searchText);
+            var json = JsonSerializer.Serialize(searchText, jsonSerializerOptions);
+            var dataItem = new StringContent(json, Encoding.UTF8, "application/json");
+            var uri = $"cachesearch/{dataItem}";
+            var response = await GetAsync<IList<CacheItemModel>>(uri, cancellationToken);
+            return response;
         }
 
         #endregion

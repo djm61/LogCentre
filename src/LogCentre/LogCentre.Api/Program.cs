@@ -2,9 +2,8 @@ using LogCentre.Api;
 using LogCentre.Api.Helpers;
 using LogCentre.Api.Middleware;
 using LogCentre.Api.Models;
-using LogCentre.BackgroundServices;
+using LogCentre.Api.Services;
 using LogCentre.Data;
-using LogCentre.Data.Interfaces;
 using LogCentre.SeedData;
 using LogCentre.Services.Interfaces;
 using LogCentre.Services.Interfaces.Log;
@@ -47,10 +46,12 @@ builder.Services.AddSingleton(backgroundServiceSettings);
 //caching settings
 var cachingSettings = builder.Configuration.GetSection("CachingSettings").Get<CachingSettings>();
 if (cachingSettings == null) throw new Exception("Missing Configuration Section: CachingSettings");
+builder.Services.AddSingleton(cachingSettings);
 builder.Services.AddDistributedCache(cachingSettings);
 
 // Add services to the container.
 AddEntityServices(builder.Services);
+builder.Services.AddTransient<IDistributedCacheService, DistributedCacheService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -71,7 +72,6 @@ builder.Services.AddSwaggerGen(s =>
     {
         { basicAuthSecurityScheme, new string[] { } }
     });
-    //s.SwaggerDoc(swaggerSettings.Version, apiInfo);
     if (File.Exists(xmlPath))
     {
         s.IncludeXmlComments(xmlPath);
@@ -90,6 +90,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 });
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
 
 //Versioning
 var apiVersioningSettings = configuration.GetSection("ApiVersioningSettings").Get<ApiVersioningSettings>();

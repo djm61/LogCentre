@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BackgroundServices\LogCentre.BackgroundServices\LogCentre.BackgroundServices.csproj" />
     <ProjectReference Include="..\Client\LogCentre.Model\LogCentre.Model.csproj" />
     <ProjectReference Include="..\Data\LogCentre.Data\LogCentre.Data.csproj" />
     <ProjectReference Include="..\Data\LogCentre.SeedData\LogCentre.SeedData.csproj" />

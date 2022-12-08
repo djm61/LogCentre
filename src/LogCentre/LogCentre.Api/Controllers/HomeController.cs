@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LogCentre.Api.Controllers
 {
+    /// <summary>
+    /// Home Controller
+    /// </summary>
     public class HomeController : Controller
     {
         /// <summary>

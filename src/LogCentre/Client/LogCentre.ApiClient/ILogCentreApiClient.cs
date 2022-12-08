@@ -1,4 +1,5 @@
 ﻿using LogCentre.Model;
+using LogCentre.Model.Cache;
 using LogCentre.Model.Log;
 
 namespace LogCentre.ApiClient
@@ -60,6 +61,12 @@ namespace LogCentre.ApiClient
         Task UpdateLogLineAsync(LineModel provider, CancellationToken cancellationToken = default);
         Task DeleteLogLineAsync(long id, CancellationToken cancellationToken = default);
         Task PurgeLogLineAsync(long id, CancellationToken cancellationToken = default);
+
+        #endregion
+
+        #region Cache Searching
+
+        Task<IList<CacheItemModel>> GetItensForSearchingAsync(string searchText, CancellationToken cancellationToken = default);
 
         #endregion
     }

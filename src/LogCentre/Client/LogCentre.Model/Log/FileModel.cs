@@ -10,6 +10,7 @@
         /// </summary>
         public FileModel()
         {
+            Name = string.Empty;
             FileComplete = ModelLiterals.No;
         }
 

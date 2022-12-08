@@ -1,10 +1,60 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Log Centre Search";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div id="notifications"></div>
+<div class="mb-3 row">
+    <input type="text" id="searchText" class="rounded-5 fs-3" autocomplete="off" />
 </div>
+
+@section Scripts{
+    <script type="text/javascript">
+        const minSearchLength = 3;
+        $(document).ready(function () {
+            $('#searchText').change(function () {
+                var value = $(this).val();
+                if (value.length < minSearchLength) {
+                    window.console.log('searchText change value is less than [' + minSearchLength + '] characters, don\'t do anything');
+                    return;
+                }
+
+                window.console.log('searchText change value is [' + value.length + '], perform search!');
+                $.ajax({
+                    type: 'get',
+                    cache: false,
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    url: '?handler=PerformSearch',
+                    data: {
+                        searchValue: value
+                    },
+                    beforesend: function () {
+                        //do nothing
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        window.console.log('performSearch error xhr[' + xhr + ']');
+                        window.console.log('performSearch error ajaxOptions[' + ajaxOptions + ']');
+                        window.console.log('performSearch error thrownError[' + thrownError + ']');
+                    },
+                    success: function (data) {
+                        if (data) {
+                            if (data.isValid) {
+                                if (data.results) {
+
+                                }
+                            } else {
+                                if (data.results) {
+                                    $('#notifications').value(data.results);
+                                    $('#notifications').addClass('text-danger');
+                                }
+                            }
+                        }
+                        window.console.log(data);
+                    }
+                })
+            });
+        });
+    </script>
+}

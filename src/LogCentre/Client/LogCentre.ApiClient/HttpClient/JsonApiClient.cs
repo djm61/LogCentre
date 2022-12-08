@@ -40,7 +40,7 @@ namespace LogCentre.ApiClient.HttpClient
 
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "LogCentreApiClient");
             _httpClient.DefaultRequestHeaders.Accept.Clear();
-            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(JsonContentType));
         }
 
         protected async Task<T> GetAsync<T>(string uri, CancellationToken cancellationToken = default)
@@ -69,7 +69,7 @@ namespace LogCentre.ApiClient.HttpClient
             var json = JsonSerializer.Serialize(data, jsonSerializerOptions);
             var dataItem = new StringContent(json, Encoding.UTF8, "application/json");
             //var response = await _httpClient.PutAsJsonAsync(uri, data, jsonSerializerOptions, cancellationToken);
-            var response = await _httpClient.PutAsync(uri, dataItem);
+            var response = await _httpClient.PutAsync(uri, dataItem, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
 
