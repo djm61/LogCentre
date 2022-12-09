@@ -13,6 +13,15 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Channels;
 
+// ****************************************
+//
+// For channels, see:
+// https://dotnetcoretutorials.com/2020/11/24/using-channels-in-net-core-part-1-getting-started/
+// https://maciejz.dev/processing-data-in-parallel-channels/
+// https://medium.com/@niteshsinghal85/using-channels-for-asynchronous-queuing-in-c-ed96c51d4576
+//
+// ****************************************
+
 var services = new ServiceCollection();
 ConfigureServices(services);
 var serviceProvider = services.BuildServiceProvider();

@@ -5,6 +5,10 @@
     Layout = "/Pages/Shared/_Layout.cshtml";
 }
 
+@section Head {
+    <link type="text/css" href="~/lib/quill/quill.core.css" />
+}
+
 <div class="card">
     <div class="col-sm-12" style="padding: 20px">
         <a onclick="jQueryModalGet('?handler=CreateOrEdit','Create Provider')" class="btn bg-success">
@@ -16,8 +20,9 @@
     </div>
     <div id="viewAll" class="card-body table-responsive"></div>
 </div>
-@section Scripts
-    {
+
+@section Scripts {
+    <script type="text/javascript" src="~/lib/quill/quill.core.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             loadData();

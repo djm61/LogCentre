@@ -2,6 +2,12 @@
 
 @model ProviderModel
 
+<style type="text/css">
+    .regexTest {
+        height: 150px;
+    }
+</style>
+
 <div id="notifications"></div>
 <form id="create-form" method="post" asp-page="Index" asp-route-id="@Model.Id" asp-page-handler="CreateOrEdit" onsubmit="return jQueryModalPost(this);">
     @if (Model.Id > 0)
@@ -35,6 +41,13 @@
         <div class="col-md-10">
             <input autocomplete="off" asp-for="Regex" class="form-control" />
             <span asp-validation-for="Regex" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <div class="col-sm-2"></div>
+        <div class="col-md-10">
+            <textarea autocomplete="off" id="regexTest" class="form-control regexTest" placeholder="Enter sample logs to be parsed here"></textarea>
         </div>
     </div>
 
@@ -90,7 +103,4 @@
 <script type="text/javascript" language=javascript>
     $.validator.unobtrusive.parse(document);
 
-            //$('#Code').keyup(function () {
-            //    $('#Code').val($('#Code').val().toUpperCase());
-            //});
 </script>

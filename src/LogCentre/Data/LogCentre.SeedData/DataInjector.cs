@@ -16,7 +16,8 @@ namespace LogCentre.SeedData
             {
                 providers = new[]
                 {
-                    new Provider {Name = "Serilog", Description = "Provider for Serilog log files", Regex = "(?<Date>\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{3})+\\s\\[(?<Level>\\w+)+\\]+\\s\\[+(?<Thread>\\d+)+\\]+\\s\\[(?<Source>.*?)\\]\\s(?<Text>.*)", LastUpdatedBy = "Seed"}
+                    new Provider {Name = "Serilog", Description = "Provider for Serilog log files", Regex = "(?<Date>\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.\\d{3})+\\s\\[(?<Level>\\w+)+\\]+\\s\\[+(?<Thread>\\d+)+\\]+\\s\\[(?<Source>.*?)\\]\\s(?<Text>.*)", LastUpdatedBy = "Seed"},
+                    new Provider {Name = "log4net", Description = "Provider for log4net log files", Regex = "(?<Level>\\w+)+\\s+(?<Date>\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2},\\d{3})+\\s+\\[+(?<Thread>.{5})+\\]+\\s+(?<Source>.{30})+\\s+(?<Text>.*)", LastUpdatedBy = "Seed"}
                 };
 
                 context.Providers.AddRange(providers);
