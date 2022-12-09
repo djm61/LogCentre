@@ -158,7 +158,7 @@ void AddEntityServices(IServiceCollection serviceCollection)
     serviceCollection.AddTransient<ILogSourceService, LogSourceService>();
     serviceCollection.AddTransient<IFileService, FileService>();
     serviceCollection.AddTransient<ILineService, LineService>();
-    serviceCollection.AddTransient<ICacheSearchService, CacheSearchService>();
+    serviceCollection.AddTransient<ISearchService, SearchService>();
 }
 
 void AddLogCentreDbContext(WebApplicationBuilder webApplicationBuilder)

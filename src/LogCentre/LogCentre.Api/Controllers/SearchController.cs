@@ -1,6 +1,5 @@
 ﻿using LogCentre.Api.Attributes;
-using LogCentre.Api.Models;
-using LogCentre.Model;
+using LogCentre.Model.Search;
 using LogCentre.Services.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
@@ -17,9 +16,9 @@ namespace LogCentre.Api.Controllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class CacheSearchController : BaseApiController<CacheSearchController>
+    public class SearchController : BaseApiController<SearchController>
     {
-        private readonly ICacheSearchService _cacheSearchService;
+        private readonly ISearchService _cacheSearchService;
 
         /// <summary>
         /// Cache Search Controller
@@ -27,8 +26,8 @@ namespace LogCentre.Api.Controllers
         /// <param name="logger">Implementation of the logger</param>
         /// <param name="cacheSearchService">Cache Search Service</param>
         /// <exception cref="ArgumentNullException">Throws is anything is null</exception>
-        public CacheSearchController(ILogger<CacheSearchController> logger,
-            ICacheSearchService cacheSearchService)
+        public SearchController(ILogger<SearchController> logger,
+            ISearchService cacheSearchService)
             : base(logger)
         {
             _cacheSearchService = cacheSearchService ?? throw new ArgumentNullException(nameof(cacheSearchService));
@@ -42,7 +41,7 @@ namespace LogCentre.Api.Controllers
         /// <param name="dataItem">JSON search string</param>
         /// <returns>list of search results</returns>
         [HttpGet("{dataItem}", Name = nameof(GetCacheResults)), Benchmark]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<CacheItemModel>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<ItemModel>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCacheResults(string dataItem)
         {

@@ -1,6 +1,6 @@
 ﻿using LogCentre.Model;
-using LogCentre.Model.Cache;
 using LogCentre.Model.Log;
+using LogCentre.Model.Search;
 
 namespace LogCentre.ApiClient
 {
@@ -66,7 +66,7 @@ namespace LogCentre.ApiClient
 
         #region Cache Searching
 
-        Task<IList<CacheItemModel>> GetItensForSearchingAsync(string searchText, CancellationToken cancellationToken = default);
+        Task<IList<ItemModel>> GetItensForSearchingAsync(string searchText, CancellationToken cancellationToken = default);
 
         #endregion
     }

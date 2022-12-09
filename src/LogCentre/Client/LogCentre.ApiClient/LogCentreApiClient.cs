@@ -1,22 +1,17 @@
 ﻿using LogCentre.ApiClient.HttpClient;
 using LogCentre.Model;
-using LogCentre.Model.Cache;
 using LogCentre.Model.Log;
+using LogCentre.Model.Search;
 
 using Microsoft.Extensions.Logging;
 
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace LogCentre.ApiClient
 {
     public class LogCentreApiClient : JsonApiClient<LogCentreApiClient>, ILogCentreApiClient
     {
-        //public LogCentreApiClient(ILogger<LogCentreApiClient> logger, System.Net.Http.HttpClient httpClient)
-        //    : base(logger, httpClient)
-        //{
-        //}
-
         public LogCentreApiClient(ILogger<LogCentreApiClient> logger, IHttpClientFactory clientFactory, string clientName = "LogCentreApiClient")
             : base(logger, clientFactory, clientName)
         {
@@ -298,13 +293,12 @@ namespace LogCentre.ApiClient
 
         #region Cache Searching
 
-        public async Task<IList<CacheItemModel>> GetItensForSearchingAsync(string searchText, CancellationToken cancellationToken = default)
+        public async Task<IList<ItemModel>> GetItensForSearchingAsync(string searchText, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("GetItemsForSearchingAsync() | searchText[{searchText}]", searchText);
             var json = JsonSerializer.Serialize(searchText, jsonSerializerOptions);
-            var dataItem = new StringContent(json, Encoding.UTF8, "application/json");
-            var uri = $"cachesearch/{dataItem}";
-            var response = await GetAsync<IList<CacheItemModel>>(uri, cancellationToken);
+            var uri = $"search/{json}";
+            var response = await GetAsync<IList<ItemModel>>(uri, cancellationToken);
             return response;
         }
 

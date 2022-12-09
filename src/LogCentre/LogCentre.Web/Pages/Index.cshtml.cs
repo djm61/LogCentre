@@ -1,5 +1,4 @@
 ﻿using LogCentre.ApiClient;
-using LogCentre.Model;
 using LogCentre.Web.Models;
 using LogCentre.Web.Services;
 
@@ -21,15 +20,16 @@ namespace LogCentre.Web.Pages
         {
         }
 
-        public async Task<JsonResult> OnGetPerformSearchAsync(string searchValue)
+        public async Task<JsonResult> OnGetPerformSearchAsync(DateTime fromDate, DateTime endDate, string searchText)
         {
-            Logger.LogDebug("OnGetPerformSearchAsync() | searchValue[{searchValue}]", searchValue);
-            if (searchValue.Length < 3)
+            Logger.LogDebug("OnGetPerformSearchAsync() | searchText[{searchText}]", searchText);
+            if (searchText.Length < 3)
             {
                 return new JsonResult(new { isValid = false, results = "Search value not long enough" });
             }
 
-            return new JsonResult(new { isValid = true, results = "asdf" });
+            var results = await ApiClient.GetItensForSearchingAsync(searchText);
+            return new JsonResult(new { isValid = true, results = results });
         }
     }
 }

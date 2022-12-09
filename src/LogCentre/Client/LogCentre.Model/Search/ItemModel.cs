@@ -1,13 +1,12 @@
-﻿namespace LogCentre.Api.Models
+﻿namespace LogCentre.Model.Search
 {
     /// <summary>
     /// Cache Item Model
     /// </summary>
-    [Serializable]
-    public class CacheItemModel
+    public class ItemModel
     {
         /// <summary>
-        /// Id of the Line
+        /// Id of the log line
         /// </summary>
         public long Id { get; set; }
 

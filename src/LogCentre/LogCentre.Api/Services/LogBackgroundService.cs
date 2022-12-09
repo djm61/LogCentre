@@ -85,88 +85,88 @@ namespace LogCentre.Api.Services
                     return;
                 }
 
-                var logLines = await dbContext.LogLines
-                    .Include(x => x.File)
-                    .ThenInclude(x => x.LogSource)
-                    .ThenInclude(x => x.Provider)
-                    .Include(x => x.File)
-                    .ThenInclude(x => x.LogSource)
-                    .ThenInclude(x => x.Host)
-                    .Where(x => x.Active == DataLiterals.Yes && x.Deleted == DataLiterals.No)
-                    .OrderByDescending(x => x.RowVersion)
-                    .AsNoTracking()
-                    .ToListAsync(stoppingToken);
-                if (stoppingToken.IsCancellationRequested)
-                {
-                    IsRunning = false;
-                    return;
-                }
+                //var logLines = await dbContext.LogLines
+                //    .Include(x => x.File)
+                //    .ThenInclude(x => x.LogSource)
+                //    .ThenInclude(x => x.Provider)
+                //    .Include(x => x.File)
+                //    .ThenInclude(x => x.LogSource)
+                //    .ThenInclude(x => x.Host)
+                //    .Where(x => x.Active == DataLiterals.Yes && x.Deleted == DataLiterals.No)
+                //    .OrderByDescending(x => x.RowVersion)
+                //    .AsNoTracking()
+                //    .ToListAsync(stoppingToken);
+                //if (stoppingToken.IsCancellationRequested)
+                //{
+                //    IsRunning = false;
+                //    return;
+                //}
 
-                foreach (var logLine in logLines)
-                {
-                    var regExValue = logLine.File?.LogSource?.Provider?.Regex ?? string.Empty;
-                    if (string.IsNullOrWhiteSpace(regExValue)) continue;
+                //foreach (var logLine in logLines)
+                //{
+                //    var regExValue = logLine.File?.LogSource?.Provider?.Regex ?? string.Empty;
+                //    if (string.IsNullOrWhiteSpace(regExValue)) continue;
 
-                    var items = await _distributedCacheService.GetFromCache<IList<CacheItemModel>>(Literals.CacheKey, stoppingToken);
-                    if (items == null)
-                    {
-                        items = new List<CacheItemModel>();
-                    }
+                //    var items = await _distributedCacheService.GetFromCache<IList<CacheItemModel>>(Literals.CacheKey, stoppingToken);
+                //    if (items == null)
+                //    {
+                //        items = new List<CacheItemModel>();
+                //    }
 
-                    if (stoppingToken.IsCancellationRequested)
-                    {
-                        IsRunning = false;
-                        return;
-                    }
+                //    if (stoppingToken.IsCancellationRequested)
+                //    {
+                //        IsRunning = false;
+                //        return;
+                //    }
 
-                    var found = items.FirstOrDefault(x => x.Id == logLine.Id);
-                    if (found != null)
-                    {
-                        continue;
-                    }
+                //    var found = items.FirstOrDefault(x => x.Id == logLine.Id);
+                //    if (found != null)
+                //    {
+                //        continue;
+                //    }
 
-                    var regex = new Regex(regExValue);
-                    var matches = regex.Match(logLine.LogLine);
-                    if (stoppingToken.IsCancellationRequested)
-                    {
-                        IsRunning = false;
-                        return;
-                    }
+                //    var regex = new Regex(regExValue);
+                //    var matches = regex.Match(logLine.LogLine);
+                //    if (stoppingToken.IsCancellationRequested)
+                //    {
+                //        IsRunning = false;
+                //        return;
+                //    }
 
-                    if (matches.Success)
-                    {
-                        var lineModel = new CacheItemModel
-                        {
-                            Id = logLine.Id
-                        };
+                //    if (matches.Success)
+                //    {
+                //        var lineModel = new CacheItemModel
+                //        {
+                //            Id = logLine.Id
+                //        };
 
-                        if (stoppingToken.IsCancellationRequested)
-                        {
-                            IsRunning = false;
-                            return;
-                        }
-                        foreach (Group group in matches.Groups)
-                        {
-                            if (stoppingToken.IsCancellationRequested)
-                            {
-                                IsRunning = false;
-                                return;
-                            }
+                //        if (stoppingToken.IsCancellationRequested)
+                //        {
+                //            IsRunning = false;
+                //            return;
+                //        }
+                //        foreach (Group group in matches.Groups)
+                //        {
+                //            if (stoppingToken.IsCancellationRequested)
+                //            {
+                //                IsRunning = false;
+                //                return;
+                //            }
 
-                            if (group.Name == "0") continue;
-                            lineModel.Line.Add(group.Name, group.Value);
-                        }
+                //            if (group.Name == "0") continue;
+                //            lineModel.Line.Add(group.Name, group.Value);
+                //        }
 
-                        if (stoppingToken.IsCancellationRequested)
-                        {
-                            IsRunning = false;
-                            return;
-                        }
+                //        if (stoppingToken.IsCancellationRequested)
+                //        {
+                //            IsRunning = false;
+                //            return;
+                //        }
 
-                        items.Add(lineModel);
-                        await _distributedCacheService.SetCache(Literals.CacheKey, items, stoppingToken);
-                    }
-                }
+                //        items.Add(lineModel);
+                //        await _distributedCacheService.SetCache(Literals.CacheKey, items, stoppingToken);
+                //    }
+                //}
 
                 IsRunning = false;
             }
