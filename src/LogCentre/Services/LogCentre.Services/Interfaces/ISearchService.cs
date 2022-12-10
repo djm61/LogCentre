@@ -4,6 +4,7 @@ namespace LogCentre.Services.Interfaces
 {
     public interface ISearchService
     {
-        Task<IList<ItemModel>> SearchAsync(string dataItem, CancellationToken cancellationToken = default);
+        Task<IList<string>> GetDistinctLogLevelsAsync(CancellationToken cancellationToken = default);
+        Task<IList<SearchResultModel>> SearchAsync(SearchModel searchModel, CancellationToken cancellationToken = default);
     }
 }

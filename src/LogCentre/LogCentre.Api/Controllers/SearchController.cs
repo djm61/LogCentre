@@ -18,54 +18,85 @@ namespace LogCentre.Api.Controllers
     [ApiController]
     public class SearchController : BaseApiController<SearchController>
     {
-        private readonly ISearchService _cacheSearchService;
+        private readonly ISearchService _searchService;
 
         /// <summary>
         /// Cache Search Controller
         /// </summary>
         /// <param name="logger">Implementation of the logger</param>
-        /// <param name="cacheSearchService">Cache Search Service</param>
+        /// <param name="searchService">Cache Search Service</param>
         /// <exception cref="ArgumentNullException">Throws is anything is null</exception>
         public SearchController(ILogger<SearchController> logger,
-            ISearchService cacheSearchService)
+            ISearchService searchService)
             : base(logger)
         {
-            _cacheSearchService = cacheSearchService ?? throw new ArgumentNullException(nameof(cacheSearchService));
+            _searchService = searchService ?? throw new ArgumentNullException(nameof(searchService));
         }
 
         #region Get
 
         /// <summary>
-        /// Gets cache search results
+        /// Gets distinct log levels
         /// </summary>
-        /// <param name="dataItem">JSON search string</param>
-        /// <returns>list of search results</returns>
-        [HttpGet("{dataItem}", Name = nameof(GetCacheResults)), Benchmark]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<ItemModel>))]
+        /// <returns>List of distinct log levels</returns>
+        [HttpGet("loglevels"), Benchmark]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<string>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetCacheResults(string dataItem)
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetDistinctLogLevels()
         {
-            Logger.LogDebug("GetCacheResults() | dataItem[{dataItem}]", dataItem);
+            Logger.LogDebug("GetDistinctLogLevels()");
             var stopwatch = Stopwatch.StartNew();
 
             try
             {
-                var entries = await _cacheSearchService.SearchAsync(dataItem);
-                var items = entries.ToList();
+                var items = await _searchService.GetDistinctLogLevelsAsync();
                 return Ok(items);
             }
-            //catch (HostException he)
-            //{
-            //    return HandleBadRequest("Error getting Host entries", he.Message);
-            //}
             catch (Exception ex)
             {
-                return HandleServerError("An error has occurred", $"GetCacheResult() produced an exception [{ex.Message}]", ex);
+                return HandleServerError("An error has occurred", $"GetDistinctLogLevels() produced an exception [{ex.Message}]", ex);
             }
             finally
             {
                 stopwatch.Stop();
-                Logger.LogInformation("**** GetCacheResults took [{0}]", stopwatch.Elapsed);
+                Logger.LogInformation("**** GetDistinctLogLevels took [{0}]", stopwatch.Elapsed);
+            }
+        }
+
+        #endregion
+
+        #region Post
+
+        /// <summary>
+        /// Gets search results
+        /// </summary>
+        /// <param name="apiVersion">The route supplied API</param>
+        /// <param name="searchModel">search model</param>
+        /// <returns>list of search results</returns>
+        [HttpPost("search"), Benchmark]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<SearchResultModel>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetSearchResults(ApiVersion apiVersion, [FromBody] SearchModel searchModel)
+        {
+            Logger.LogDebug("GetSearchResults() | searchModel[{searchModel}]", searchModel);
+            var stopwatch = Stopwatch.StartNew();
+
+            try
+            {
+                var entries = await _searchService.SearchAsync(searchModel);
+                var items = entries.ToList();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                return HandleServerError("An error has occurred", $"GetSearchResults() produced an exception [{ex.Message}]", ex);
+            }
+            finally
+            {
+                stopwatch.Stop();
+                Logger.LogInformation("**** GetSearchResults took [{0}]", stopwatch.Elapsed);
             }
         }
 

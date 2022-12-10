@@ -6,40 +6,51 @@
 
 @section Head {
     <link rel="stylesheet" href="~/lib/jquery-datetimepicker/jquery.datetimepicker.min.css" />
+    <link rel="stylesheet" href="~/lib/jgrowl/jquery.jgrowl.min.css" />
 }
 
-<div id="notifications"></div>
+<div class="errorNotification"></div>
+
 <div class="row">
-    <div class="col-2">Start Date</div>
-    <div class="col-2">End Date</div>
-    <div class="col-2">Log Line</div>
+    <div class="col-1">Start Date</div>
+    <div class="col-1">End Date</div>
+    <div class="col-2">Level</div>
+    <dic class="col-2">Source</dic>
+    <div class="col-3">Log Line</div>
     <div class="col-auto"></div>
     <div class="col-1"></div>
 </div>
 
 <div class="mb-3 row">
-    <div class="col-sm-2">
-        <input type="text" id="startDate" class="rounded-3 fs-5" style="width: 99%" autocomplete="off" />
+    <div class="col-1">
+        <input type="text" id="startDate" class="form-control" style="width: 99%" autocomplete="off" />
     </div>
-    <div class="col-sm-2">
-        <input type="text" id="endDate" class="rounded-3 fs-5" style="width: 99%" autocomplete="off" />
+    <div class="col-1">
+        <input type="text" id="endDate" class="form-control" style="width: 99%" autocomplete="off" />
     </div>
     <div class="col-2">
-        <input type="text" id="searchText" class="rounded-3 fs-5" style="width: 99%" autocomplete="off" />
+        <input type="text" id="level" class="form-control" style="width: 99%" autocomplete="off" />
     </div>
-    <div class="col-auto">&nbsp;</div>
+    <div class="col-2">
+        <input type="text" id="source" class="form-control" style="width:99%" autocomplete="off" />
+    </div>
+    <div class="col-3">
+        <input type="text" id="searchText" class="form-control" style="width: 99%" autocomplete="off" />
+    </div>
+    <div class="col-auto"></div>
     <div class="col-1">
         <input type="submit" id="btnSubmit" value="Search" class="btn btn-primary" />
     </div>
 </div>
 
 @section Scripts{
-    <script src="~/lib/jquery-datetimepicker/jquery.datetimepicker.full.min.js"></script>
     <script src="~/lib/momentjs/moment.min.js"></script>
+    <script src="~/lib/jquery-datetimepicker/jquery.datetimepicker.full.min.js"></script>
+    <script src="~/lib/jgrowl/jquery.jgrowl.min.js"></script>
     <script type="text/javascript">
         const minSearchLength = 3;
 
-        function getDateAsString(date){
+        function getDateAsString(date) {
             window.console.log('getDateAsString() | date[' + date + ']');
             let str = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
             window.console.log('getDateAsString() | returning[' + str + ']');
@@ -63,12 +74,40 @@
         }
 
         $(document).ready(function () {
-            $.datetimepicker.setDateFormatter('moment');
+            $(".dismiss").click(function () {
+                $("#errorNotification").fadeOut("slow");
+            });
+
+            //#region JS Datetime picker
+            //see: https://xdsoft.net/jqplugins/datetimepicker/ for documentation
+            $.datetimepicker.setDateFormatter({
+                parseDate: function (date, format) {
+                    var d = moment(date, format);
+                    return d.isValid() ? d.toDate() : false;
+                },
+
+                formatDate: function (date, format) {
+                    return moment(date).format(format);
+                },
+
+                //Optional if using mask input
+                formatMask: function (format) {
+                    return format
+                        .replace(/Y{4}/g, '9999')
+                        .replace(/Y{2}/g, '99')
+                        .replace(/M{2}/g, '19')
+                        .replace(/D{2}/g, '39')
+                        .replace(/H{2}/g, '29')
+                        .replace(/m{2}/g, '59')
+                        .replace(/s{2}/g, '59');
+                }
+            });
+
             $('#startDate').datetimepicker({
-                format: "YYYY-MM-DD HH:mm:ss",
-                formatDate: "yyyy-MM-dd",
+                format: "YYYY-MM-DD hh:mm:ss",
+                formatDate: "YYYY-MM-DD",
                 timeFormat: "hh:mm:ss",
-                value: getYesterday(),
+                //value: getYesterday(),
                 mask: true,
                 onShow: function (ct) {
                     this.setOptions({
@@ -78,10 +117,11 @@
             });
 
             $('#endDate').datetimepicker({
-                format: "YYYY-MM-DD HH:mm:ss",
-                formatDate: "yyyy-MM-dd",
+                //format: "Y-m-d H:i z",
+                format: 'YYYY-MM-DD hh:mm:ss',
+                formatDate: "YYYY-MM-DD",
                 timeFormat: "hh:mm:ss",
-                value: getToday(),
+                //value: getToday(),
                 mask: true,
                 onShow: function (ct) {
                     this.setOptions({
@@ -92,11 +132,21 @@
 
             $('#startDate').val(getYesterday());
             $('#endDate').val(getToday());
+            //#endregion
 
             $('#btnSubmit').click(function () {
-                var fromDate = $('#startDate').val();
-                var endDate = $('#endDate').val();
-                var searchText = $('#searchText').val();
+                let fromDate = $('#startDate').val();
+                let endDate = $('#endDate').val();
+                let level = $('#level').val();
+                let source = '';
+                let searchText = $('#searchText').val();
+                let model = {
+                    StartDate: fromDate,
+                    EndDate: endDate,
+                    Level: level,
+                    Source: source,
+                    LogLine: searchText
+                };
 
                 $.ajax({
                     type: 'get',
@@ -104,11 +154,7 @@
                     dataType: 'json',
                     contentType: 'application/json',
                     url: '?handler=PerformSearch',
-                    data: {
-                        fromDate: fromDate,
-                        endDate: endDate,
-                        searchText: searchText
-                    },
+                    data: model,
                     beforesend: function () {
                         //do nothing
                     },
@@ -118,19 +164,18 @@
                         window.console.log('performSearch error thrownError[' + thrownError + ']');
                     },
                     success: function (data) {
+                        window.console.log(data);
                         if (data) {
                             if (data.isValid) {
                                 if (data.results) {
-
+                                    //todo parse results into something
                                 }
                             } else {
                                 if (data.results) {
-                                    $('#notifications').value(data.results);
-                                    $('#notifications').addClass('text-danger');
+                                    $.jGrowl(data.results, { sticky: true });
                                 }
                             }
                         }
-                        window.console.log(data);
                     }
                 })
             });

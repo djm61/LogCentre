@@ -46,6 +46,16 @@
       "provider": "cdnjs",
       "library": "quill@1.3.7",
       "destination": "wwwroot/lib/quill"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery-jgrowl@1.4.8",
+      "destination": "wwwroot/lib/jgrowl"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "font-awesome@6.2.1",
+      "destination": "wwwroot/lib/font-awesome"
     }
   ]
 }

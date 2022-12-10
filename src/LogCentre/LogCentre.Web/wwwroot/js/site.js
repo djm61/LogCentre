@@ -19,7 +19,7 @@ function showNotification(text) {
 
 $(document).ready(function () {
     jQueryModalGet = (url, title) => {
-        window.console.log('jQueryModalGet() | url[' + url + '], title[' + title + ']');
+        window.console.log(`jQueryModalGet() | url[${url}], title[${title}]`);
         try {
             $.ajax({
                 type: 'GET',
@@ -41,7 +41,7 @@ $(document).ready(function () {
         }
     }
     jQueryModalPost = form => {
-        window.console.log('jQueryModalPost() | url[' + form.action + ']');
+        window.console.log(`jQueryModalPost() | url[${form.action}]`);
         try {
             $.ajax({
                 type: 'POST',
@@ -73,7 +73,7 @@ $(document).ready(function () {
         }
     }
     jQueryModalDelete = form => {
-        window.console.log('jQueryModalDelete() | url[' + form.action + ']');
+        window.console.log(`jQueryModalDelete() | url[${form.action}]`);
         if (confirm('Are you sure to delete this record ?')) {
             try {
                 $.ajax({

@@ -64,9 +64,9 @@ namespace LogCentre.ApiClient
 
         #endregion
 
-        #region Cache Searching
+        #region Searching
 
-        Task<IList<ItemModel>> GetItensForSearchingAsync(string searchText, CancellationToken cancellationToken = default);
+        Task<IList<SearchResultModel>> GetItensForSearchingAsync(SearchModel searchModel, CancellationToken cancellationToken = default);
 
         #endregion
     }

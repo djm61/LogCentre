@@ -1,4 +1,5 @@
-﻿using LogCentre.Console;
+﻿using LogCentre.ApiClient;
+using LogCentre.Console;
 using LogCentre.Console.Config;
 using LogCentre.Console.Models;
 using LogCentre.Model.Log;
@@ -124,7 +125,7 @@ void AddHttpClientFactory(IServiceCollection serviceCollection, IConfiguration c
     var authToken = Encoding.ASCII.GetBytes($"{username}:{password}");
     var client = new HttpClient();
 
-    serviceCollection.AddHttpClient("LogCentreApiClient", client =>
+    serviceCollection.AddHttpClient(ClientLiterals.ApiClientName, client =>
     {
         client.BaseAddress = new Uri(host);
         client.DefaultRequestHeaders.Accept.Clear();

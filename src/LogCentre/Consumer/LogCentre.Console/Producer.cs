@@ -27,7 +27,7 @@ namespace LogCentre.Console
             _hostId = hostIdModel?.HostId ?? throw new ArgumentNullException(nameof(hostIdModel));
 
             var clientLogger = loggerFactory.CreateLogger<LogCentreApiClient>();
-            _client = new LogCentreApiClient(clientLogger, clientFactory, "LogCentreApiClient");
+            _client = new LogCentreApiClient(clientLogger, clientFactory, ClientLiterals.ApiClientName);
         }
 
         public async Task StartAsync()

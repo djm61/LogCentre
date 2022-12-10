@@ -5,6 +5,7 @@ using LogCentre.Model.Search;
 
 using Microsoft.Extensions.Logging;
 
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -12,7 +13,7 @@ namespace LogCentre.ApiClient
 {
     public class LogCentreApiClient : JsonApiClient<LogCentreApiClient>, ILogCentreApiClient
     {
-        public LogCentreApiClient(ILogger<LogCentreApiClient> logger, IHttpClientFactory clientFactory, string clientName = "LogCentreApiClient")
+        public LogCentreApiClient(ILogger<LogCentreApiClient> logger, IHttpClientFactory clientFactory, string clientName = ClientLiterals.ApiClientName)
             : base(logger, clientFactory, clientName)
         {
         }
@@ -291,17 +292,26 @@ namespace LogCentre.ApiClient
 
         #endregion
 
-        #region Cache Searching
+        #region Searching
 
-        public async Task<IList<ItemModel>> GetItensForSearchingAsync(string searchText, CancellationToken cancellationToken = default)
+        public async Task<IList<SearchResultModel>> GetItensForSearchingAsync(SearchModel searchModel, CancellationToken cancellationToken = default)
         {
-            Logger.LogDebug("GetItemsForSearchingAsync() | searchText[{searchText}]", searchText);
-            var json = JsonSerializer.Serialize(searchText, jsonSerializerOptions);
-            var uri = $"search/{json}";
-            var response = await GetAsync<IList<ItemModel>>(uri, cancellationToken);
+            Logger.LogDebug("GetItemsForSearchingAsync() | searchModel[{searchModel}]", searchModel);
+            var uri = "Search/search";
+            var response = await PostForSearchAsync(uri, searchModel, cancellationToken);
             return response;
         }
 
         #endregion
+
+        private async Task<IList<SearchResultModel>> PostForSearchAsync(string uri, SearchModel searchModel, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("PostForSearchAsync() | uri[{uri}], searchModel[{searchModel}]", uri, searchModel);
+            var response = await HttpClient.PostAsJsonAsync(uri, searchModel, JsonSerializerOptions, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            return await JsonSerializer.DeserializeAsync<IList<SearchResultModel>>(responseStream, JsonSerializerOptions, cancellationToken);
+        }
     }
 }
