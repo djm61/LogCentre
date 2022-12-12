@@ -36,12 +36,13 @@ namespace LogCentre.Web.Pages
             try
             {
                 var results = await ApiClient.GetItensForSearchingAsync(searchModel);
-                return new JsonResult(new { isValid = true, results = results });
+                var html = await RenderService.ToStringAsync("_Results", results);
+                return new JsonResult(new { isValid = true, html = html });
             }
             catch (Exception ex)
             {
                 Logger.LogError($"OnGetPerformSearchAsync had an error [{ex}]", ex);
-                return new JsonResult(new { isValid = false, results = ex.Message });
+                return new JsonResult(new { isValid = false, message = ex.Message });
             }
             finally
             {

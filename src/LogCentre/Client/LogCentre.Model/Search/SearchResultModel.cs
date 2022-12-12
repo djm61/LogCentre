@@ -11,6 +11,11 @@
         public long Id { get; set; }
 
         /// <summary>
+        /// Id of the associated File
+        /// </summary>
+        public long FileId { get; set; }
+
+        /// <summary>
         /// Date and Time of the log entry
         /// </summary>
         public DateTime LogDate { get; set; }
@@ -29,6 +34,11 @@
         /// Log Line
         /// </summary>
         public string LogLine { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Associated File
+        /// </summary>
+        public Log.FileModel? FileModel { get; set; }
 
         /// <summary>
         /// ToString implementation of this object

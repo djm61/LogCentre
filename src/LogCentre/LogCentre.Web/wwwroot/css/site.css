@@ -16,3 +16,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+#tblResult td {
+    vertical-align: top;
+    font-size: 12px;
+}

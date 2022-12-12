@@ -28,7 +28,6 @@
         <input type="text" id="endDate" class="form-control" style="width: 99%" autocomplete="off" />
     </div>
     <div class="col-1">
-        @*<input type="text" id="level" class="form-control" style="width: 99%" autocomplete="off" />*@
         <select id="level" class="form-control" asp-items="Model.DistinctLevels">
             <option>Level</option>
         </select>
@@ -42,6 +41,10 @@
     <div class="col-1">
         <input type="submit" id="btnSubmit" value="Search" class="btn btn-primary" />
     </div>
+</div>
+
+<div class="mb-3 row" id="results">
+
 </div>
 
 @section Scripts{
@@ -108,7 +111,6 @@
                 format: "YYYY-MM-DD HH:mm:ss",
                 formatDate: "YYYY-MM-DD",
                 timeFormat: "HH:mm:ss",
-                //value: getYesterday(),
                 mask: true,
                 onShow: function (ct) {
                     this.setOptions({
@@ -118,11 +120,9 @@
             });
 
             $('#endDate').datetimepicker({
-                //format: "Y-m-d H:i z",
                 format: 'YYYY-MM-DD HH:mm:ss',
                 formatDate: "YYYY-MM-DD",
                 timeFormat: "HH:mm:ss",
-                //value: getToday(),
                 mask: true,
                 onShow: function (ct) {
                     this.setOptions({
@@ -157,7 +157,7 @@
                     url: '?handler=PerformSearch',
                     data: model,
                     beforesend: function () {
-                        //do nothing
+                        $('#results').emty();
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         window.console.log('performSearch error xhr[' + xhr + ']');
@@ -168,11 +168,11 @@
                         window.console.log(data);
                         if (data) {
                             if (data.isValid) {
-                                if (data.results) {
-                                    //todo parse results into something
+                                if (data.html) {
+                                    $('#results').html(data.html);
                                 }
                             } else {
-                                if (data.results) {
+                                if (data.message) {
                                     $.jGrowl(data.results, { sticky: true });
                                 }
                             }
