@@ -4,6 +4,7 @@ using LogCentre.Web.Models;
 using LogCentre.Web.Services;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 using System.Diagnostics;
 
@@ -19,8 +20,12 @@ namespace LogCentre.Web.Pages
         {
         }
 
-        public void OnGet()
+        public SelectList DistinctLevels { get; set; }
+
+        public async Task OnGet()
         {
+            var levelSelectList = await GetLevelSelectList();
+            DistinctLevels = levelSelectList;
         }
 
         public async Task<JsonResult> OnGetPerformSearchAsync(SearchModel searchModel)
@@ -43,6 +48,15 @@ namespace LogCentre.Web.Pages
                 stopwatch.Stop();
                 Logger.LogInformation("**** OnGetPerformSearchAsync took [{0}]", stopwatch.Elapsed);
             }
+        }
+
+        private async Task<SelectList> GetLevelSelectList()
+        {
+            Logger.LogDebug("GetLevelSelectList()");
+
+            var items = await ApiClient.GetDistinctLevelsAsync();
+            var list = new SelectList(items);
+            return list;
         }
     }
 }

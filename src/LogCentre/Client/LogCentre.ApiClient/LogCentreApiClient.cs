@@ -302,6 +302,14 @@ namespace LogCentre.ApiClient
             return response;
         }
 
+        public async Task<IList<string>> GetDistinctLevelsAsync(CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("GetDistinctLevelsAsync()");
+            var uri = "search/distinctlevels";
+            var response = await GetAsync<IList<string>>(uri, cancellationToken);
+            return response;
+        }
+
         #endregion
 
         private async Task<IList<SearchResultModel>> PostForSearchAsync(string uri, SearchModel searchModel, CancellationToken cancellationToken = default)

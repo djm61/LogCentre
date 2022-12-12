@@ -39,7 +39,7 @@ namespace LogCentre.Api.Controllers
         /// Gets distinct log levels
         /// </summary>
         /// <returns>List of distinct log levels</returns>
-        [HttpGet("loglevels"), Benchmark]
+        [HttpGet("distinctlevels"), Benchmark]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<string>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

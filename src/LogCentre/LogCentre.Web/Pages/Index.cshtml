@@ -12,24 +12,26 @@
 <div class="errorNotification"></div>
 
 <div class="row">
-    <div class="col-1">Start Date</div>
-    <div class="col-1">End Date</div>
-    <div class="col-2">Level</div>
+    <div class="col-2">Start Date</div>
+    <div class="col-2">End Date</div>
+    <div class="col-1">Level</div>
     <dic class="col-2">Source</dic>
     <div class="col-3">Log Line</div>
-    <div class="col-auto"></div>
     <div class="col-1"></div>
 </div>
 
 <div class="mb-3 row">
-    <div class="col-1">
+    <div class="col-2">
         <input type="text" id="startDate" class="form-control" style="width: 99%" autocomplete="off" />
     </div>
-    <div class="col-1">
+    <div class="col-2">
         <input type="text" id="endDate" class="form-control" style="width: 99%" autocomplete="off" />
     </div>
-    <div class="col-2">
-        <input type="text" id="level" class="form-control" style="width: 99%" autocomplete="off" />
+    <div class="col-1">
+        @*<input type="text" id="level" class="form-control" style="width: 99%" autocomplete="off" />*@
+        <select id="level" class="form-control" asp-items="Model.DistinctLevels">
+            <option>Level</option>
+        </select>
     </div>
     <div class="col-2">
         <input type="text" id="source" class="form-control" style="width:99%" autocomplete="off" />
@@ -37,7 +39,6 @@
     <div class="col-3">
         <input type="text" id="searchText" class="form-control" style="width: 99%" autocomplete="off" />
     </div>
-    <div class="col-auto"></div>
     <div class="col-1">
         <input type="submit" id="btnSubmit" value="Search" class="btn btn-primary" />
     </div>
@@ -104,9 +105,9 @@
             });
 
             $('#startDate').datetimepicker({
-                format: "YYYY-MM-DD hh:mm:ss",
+                format: "YYYY-MM-DD HH:mm:ss",
                 formatDate: "YYYY-MM-DD",
-                timeFormat: "hh:mm:ss",
+                timeFormat: "HH:mm:ss",
                 //value: getYesterday(),
                 mask: true,
                 onShow: function (ct) {
@@ -118,9 +119,9 @@
 
             $('#endDate').datetimepicker({
                 //format: "Y-m-d H:i z",
-                format: 'YYYY-MM-DD hh:mm:ss',
+                format: 'YYYY-MM-DD HH:mm:ss',
                 formatDate: "YYYY-MM-DD",
-                timeFormat: "hh:mm:ss",
+                timeFormat: "HH:mm:ss",
                 //value: getToday(),
                 mask: true,
                 onShow: function (ct) {

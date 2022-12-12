@@ -68,6 +68,8 @@ namespace LogCentre.ApiClient
 
         Task<IList<SearchResultModel>> GetItensForSearchingAsync(SearchModel searchModel, CancellationToken cancellationToken = default);
 
+        Task<IList<string>> GetDistinctLevelsAsync(CancellationToken cancellationToken = default);
+
         #endregion
     }
 }
