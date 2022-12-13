@@ -141,6 +141,10 @@
                 let level = $('#level').val();
                 let source = '';
                 let searchText = $('#searchText').val();
+                if (level == 'Level'){
+                    level = '';
+                }
+
                 let model = {
                     StartDate: fromDate,
                     EndDate: endDate,
