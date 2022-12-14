@@ -6,7 +6,7 @@
 }
 
 @section Head {
-    <link type="text/css" href="~/lib/quill/quill.core.css" />
+    @*<link type="text/css" href="~/lib/quill/quill.core.css" />*@
 }
 
 <div class="card">
@@ -22,7 +22,8 @@
 </div>
 
 @section Scripts {
-    <script type="text/javascript" src="~/lib/quill/quill.core.min.js"></script>
+    @*<script type="text/javascript" src="~/lib/quill/quill.core.min.js"></script>*@
+    <script type="text/javascript" src="~/lib/tinymce/tinymce.min.js"></script>
     <script type="text/javascript">
         function loadData() {
             window.console.log('loadData()');
@@ -30,76 +31,8 @@
             $('#viewAll').load('?handler=ViewAllPartial');
         }
 
-        function getColour(i) {
-            window.console.log('getColour() | i[' + i + ']');
-            // Define an array of colors to use for the matched groups
-            const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#00ffff", "#ff00ff"];
-
-            // Return the color at the specified index, or black if the index is out of bounds
-            return colors[i] || "#000000";
-        }
-
-        function regexParser(regex, textarea) {
-            window.console.log('regexParser() | regex[' + regex + ']');
-
-            if (regex.length === 0){
-                window.console.log('regexParser() | regex length is 0, return');
-                return;
-            }
-
-            if (!textarea) {
-                window.console.log('regexParser() | textarea is invalid, return');
-                return;
-            }
-
-            if (textarea) {
-                var value = $(textarea).val();
-                if (!value || value.length === 0){
-                    window.console.log('regexParser() | textarea value is invalid or length is 0, return');
-                    return;
-                }
-            }
-
-            // Create a regular expression object
-            const regex = new RegExp(regex);
-
-            // Use the regex object to test the string in the textarea
-            const result = regex.test($(textarea).val());
-
-            // If there are matches, highlight them in the textarea
-            if (result) {
-                //const matches = textarea.value.match(regex);
-                //for (let i = 0; i < matches.length; i++) {
-                //    textarea.value = textarea.value.replace(matches[i], `<mark>${matches[i]}</mark>`);
-                //}
-                const matches = $(textarea).val().match(regex);
-                for (let i = 0; i < matches.length; i++) {
-                    const color = getColour(i); // Get a color based on the matched group
-                    $(textarea).val($(textarea).val().replace(matches[i], `<span style="color: ${color}">${matches[i]}</span>`));
-                }
-            }
-        }
-
         $(document).ready(function () {
             loadData();
-
-            const textarea = $('#regexTest');
-
-            $('#reload').on('click', function () {
-                loadData();
-            });
-
-            $('#Regex').on('change', function () {
-                window.console.log('Regex change!');
-                var regex = $(this).val();
-                regexParser(regex, textarea);
-            });
-
-            $('#regexTest').on('change', function () {
-                window.console.log('regexTest change!');
-                var regex = $('#Regex').val();
-                regexParser(regex, textarea);
-            });
         });
     </script>
 }

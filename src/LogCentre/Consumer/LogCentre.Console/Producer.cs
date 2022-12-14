@@ -158,9 +158,9 @@ namespace LogCentre.Console
                 {
                     grouping = Guid.NewGuid();
                     _ = DateTime.TryParse(matches.Groups["Date"].Value, out date);
-                    level = matches.Groups["Level"]?.Value ?? string.Empty;
-                    thread = matches.Groups["Thread"]?.Value ?? string.Empty;
-                    source = matches.Groups["Source"]?.Value ?? string.Empty;
+                    level = matches.Groups["Level"]?.Value?.Trim() ?? string.Empty;
+                    thread = matches.Groups["Thread"]?.Value?.Trim() ?? string.Empty;
+                    source = matches.Groups["Source"]?.Value?.Trim() ?? string.Empty;
                 }
 
                 var logLine = new LineModel

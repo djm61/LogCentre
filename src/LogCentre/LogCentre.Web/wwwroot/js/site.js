@@ -30,6 +30,9 @@ $(document).ready(function () {
                     $('#form-modal .modal-body').html(res.html);
                     $('#form-modal .modal-title').html(title);
                     $('#form-modal').modal('show');
+                    if (typeof afterLoad === 'function') {
+                        afterLoad();
+                    }
                 },
                 error: function (err) {
                     console.log(err)

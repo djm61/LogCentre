@@ -15,7 +15,7 @@
         <div class="mb-3 row">
             <label for="staticId" class="col-sm-2 col-form-label">Id</label>
             <div class="col-sm-10">
-                <input type="text" readonly class="form-control-plaintext" id="staticId" value="@Model.Id">
+                <input type="text" readonly class="form-control-plaintext" id="staticId" value="@Model.Id" placeholder="Id" />
             </div>
         </div>
     }
@@ -23,7 +23,7 @@
     <div class="mb-3 row">
         <label class="col-sm-2 form-label">Name</label>
         <div class="col-md-10">
-            <input autocomplete="off" asp-for="Name" class="form-control">
+            <input autocomplete="off" asp-for="Name" class="form-control" placeholder="Name of Provider" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
     </div>
@@ -31,7 +31,7 @@
     <div class="mb-3 row">
         <label class="col-sm-2 form-label">Description</label>
         <div class="col-md-10">
-            <input autocomplete="off" asp-for="Description" class="form-control">
+            <input autocomplete="off" asp-for="Description" class="form-control" placeholder="Provider Description" />
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
     </div>
@@ -39,7 +39,7 @@
     <div class="mb-3 row">
         <label class="col-sm-2 form-label">Regex</label>
         <div class="col-md-10">
-            <input autocomplete="off" asp-for="Regex" class="form-control" />
+            <input autocomplete="off" asp-for="Regex" class="form-control" placeholder="Regex" />
             <span asp-validation-for="Regex" class="text-danger"></span>
         </div>
     </div>
@@ -102,4 +102,98 @@
 
 <script type="text/javascript" language=javascript>
     $.validator.unobtrusive.parse(document);
+
+    function getBackgroundColour(i) {
+        window.console.log(`getBackgroundColour() | i[${i}]`);
+        //might need to increase this
+        //const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#00ffff", "#ff00ff"];
+        const colours = ['#8BD3E6', '#FF6D6A', '#E9EC6B', '#EFBE7D', '#B1A2CA']
+        return colours[i] || '#fff';
+    }
+
+    function getColour(i) {
+        window.console.log(`getColour() | i[${i}]`);
+        const colours = ['#000', '#000', '#000', '#000', '#000']
+        return colours[i] || '#000';
+    }
+
+    function regexParser(regex, textarea) {
+        window.console.log(`regexParser() | regex[${regex}]`);
+        if (regex.length === 0) {
+            window.console.log('regexParser() | regex length is 0, return');
+            return;
+        }
+
+        if (!textarea) {
+            window.console.log('regexParser() | textarea is invalid, return');
+            return;
+        }
+
+        if (textarea) {
+            var value = $(textarea).val();
+            if (!value || value.length === 0) {
+                window.console.log('regexParser() | textarea value is invalid or length is 0, return');
+                return;
+            }
+        }
+
+        const regexp = new RegExp(regex);
+        const result = regexp.test($(textarea).val());
+        if (result) {
+            debugger;
+            const matches = $(textarea).val().match(regexp);
+            for (let i = 0; i < matches.length; i++) {
+                const colour = getColour(i);
+                const backgroundColour = getBackgroundColour(i);
+                window.console.log(`regexParser() | colour[${colour}], bgColour[${backgroundColour}]`);
+                const replacement = `<span style="color: ${colour}; background-color: ${backgroundColour}">${matches[i]}</span>`;
+                const textValue = $(textarea).val();
+                //if (textValue.indexOf(replacement) != -1) {
+                //    window.console.log('regexParser() | match already exists, don\'t match again');
+                //} else {
+                if (textValue.indexOf(replacement) != -1) {
+                    window.console.log(`regexParser() | match already exists, rever it back to [${matches[i]}] in order for it to be replaced`);
+                    $(textarea).val($(textarea).val().replace(replacement, matches[i]));
+                }
+
+                window.console.log('regexParser() | match does not exist, replace with colour!');
+                $(textarea).html($(textarea).val().replace(matches[i], replacement));
+                //}
+            }
+        }
+    }
+
+    function afterLoad() {
+        window.console.log('afterLoad()');
+        tinymce.init({
+            selector: 'textarea#regexText',
+            toolbar: false
+        });
+    }
+
+    $(document).ready(function () {
+        const textarea = $('#regexTest');
+        $('#reload').on('click', function () {
+            loadData();
+        });
+
+        $('#Regex').on('keyup change', function () {
+            window.console.log('Regex change!');
+            var regex = $(this).val();
+            regexParser(regex, textarea);
+        });
+
+        $('#regexTest').on('keyup change', function () {
+            window.console.log('regexTest change!');
+            var value = $(this).val();
+            $('#hRegexTest').val(value);
+            var regex = $('#Regex').val();
+            regexParser(regex, textarea);
+        });
+
+        tinymce.init({
+            selector: 'textarea#regexText',
+            toolbar: false
+        });
+    });
 </script>
