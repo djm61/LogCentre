@@ -47,7 +47,8 @@
     <div class="mb-3 row">
         <div class="col-sm-2"></div>
         <div class="col-md-10">
-            <textarea autocomplete="off" id="regexTest" class="form-control regexTest" placeholder="Enter sample logs to be parsed here"></textarea>
+            @*<textarea autocomplete="off" id="regexTest" name="editordata" class="form-control regexTest" placeholder="Enter sample logs to be parsed here"></textarea>*@
+            <div id="regexTest" name="editordata"></div>
         </div>
     </div>
 
@@ -165,10 +166,17 @@
 
     function afterLoad() {
         window.console.log('afterLoad()');
-        tinymce.init({
-            selector: 'textarea#regexText',
-            toolbar: false
-        });
+        //tinymce.init({
+        //    selector: 'textarea#regexText',
+        //    toolbar: false
+        //});
+        //$('#regexTest').summernote();
+    }
+
+    function regexTestChange(e){
+        window.console.log(`regexTestChange() | e[${e}]`);
+        var regex = $('#Regex').val();
+        regexParser(regex, e);
     }
 
     $(document).ready(function () {
@@ -186,14 +194,35 @@
         $('#regexTest').on('keyup change', function () {
             window.console.log('regexTest change!');
             var value = $(this).val();
-            $('#hRegexTest').val(value);
             var regex = $('#Regex').val();
             regexParser(regex, textarea);
         });
 
-        tinymce.init({
-            selector: 'textarea#regexText',
-            toolbar: false
+        $('#regexTest').on('summernote.chage', function (we, contents, $editable){
+            debugger;
+            window.console.log('content changed!');
+        });
+
+        //tinymce.init({
+        //    selector: 'textarea#regexText',
+        //    toolbar: false
+        //});
+        $('#regexTest').summernote({
+            height: 150,
+            width: '100%',
+            minHeight: null,
+            maxHeight: null,
+            focus: true,
+            toolbar: [],
+            disableDragAndDrop: true,
+            shortcuts: false,
+            styleWithSpan: false,
+            callbacks: {
+                onChange: function (contents, $editable) {
+                    debugger;
+                    window.console.log('onChange:', contents, $editable);
+                }
+            }
         });
     });
 </script>

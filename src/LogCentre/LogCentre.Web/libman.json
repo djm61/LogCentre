@@ -57,10 +57,15 @@
       "library": "font-awesome@6.2.1",
       "destination": "wwwroot/lib/font-awesome"
     },
+    //{
+    //  "provider": "cdnjs",
+    //  "library": "tinymce@6.3.1",
+    //  "destination": "wwwroot/lib/tinymce"
+    //}
     {
       "provider": "cdnjs",
-      "library": "tinymce@6.3.1",
-      "destination": "wwwroot/lib/tinymce"
+      "library": "summernote@0.8.20",
+      "destination": "wwwroot/lib/summernote"
     }
   ]
 }

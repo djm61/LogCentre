@@ -145,11 +145,17 @@ namespace LogCentre.Console
             var level = string.Empty;
             var thread = string.Empty;
             var source = string.Empty;
+            var logLine = string.Empty;
             foreach (var line in lines)
             {
                 if (lineCount > 0 && lineCount < lines.Count && currentRow < lineCount)
                 {
                     currentRow++;
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(line))
+                {
                     continue;
                 }
 
@@ -161,22 +167,27 @@ namespace LogCentre.Console
                     level = matches.Groups["Level"]?.Value?.Trim() ?? string.Empty;
                     thread = matches.Groups["Thread"]?.Value?.Trim() ?? string.Empty;
                     source = matches.Groups["Source"]?.Value?.Trim() ?? string.Empty;
+                    logLine = matches.Groups["Text"]?.Value?.Trim() ?? line;
+                }
+                else
+                {
+                    logLine = line;
                 }
 
-                var logLine = new LineModel
+                var logLineModel = new LineModel
                 {
                     FileId = fileModel.Id,
                     LogDate = date,
                     Level = level,
                     Thread = thread,
                     Source = source,
-                    LogLine = matches.Groups["Text"]?.Value ?? string.Empty,
+                    LogLine = logLine,
                     FullLine = line,
                     Grouping = grouping,
                     LastUpdatedBy = $"Producer-{_hostId}"
                 };
 
-                await _channelWriter.WriteAsync(logLine);
+                await _channelWriter.WriteAsync(logLineModel);
             }
         }
     }
