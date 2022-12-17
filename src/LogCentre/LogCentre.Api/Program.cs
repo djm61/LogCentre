@@ -18,7 +18,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 
 using System.Reflection;
-using System.Runtime;
 
 var builder = WebApplication.CreateBuilder(args);
 IConfiguration configuration = new ConfigurationBuilder()
@@ -138,12 +137,13 @@ if (app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseMiddleware<ApiKeyMiddleware>();
+app.UseMiddleware<TraceIdMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseMiddleware<TraceIdMiddleware>();
 
 app.MapControllers();
 

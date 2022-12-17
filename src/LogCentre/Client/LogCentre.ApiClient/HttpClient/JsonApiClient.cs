@@ -27,6 +27,8 @@ namespace LogCentre.ApiClient.HttpClient
             HttpClient.DefaultRequestHeaders.Add("User-Agent", ClientLiterals.ApiClientName);
             HttpClient.DefaultRequestHeaders.Accept.Clear();
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            HttpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
+            HttpClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("en-US"));
         }
 
         public JsonApiClient(ILogger<T> logger, IHttpClientFactory clientFactory, string clientName = "")
@@ -40,6 +42,8 @@ namespace LogCentre.ApiClient.HttpClient
             HttpClient.DefaultRequestHeaders.Add("User-Agent", ClientLiterals.ApiClientName);
             HttpClient.DefaultRequestHeaders.Accept.Clear();
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(JsonContentType));
+            HttpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
+            HttpClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("en-US"));
         }
 
         protected async Task<T> GetAsync<T>(string uri, CancellationToken cancellationToken = default)

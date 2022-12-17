@@ -18,6 +18,7 @@ namespace LogCentre.Web.Pages
            IConfiguration configuration)
            : base(logger, client, renderService, configuration)
         {
+            DistinctLevels = new SelectList(new List<string>());
         }
 
         public SelectList DistinctLevels { get; set; }

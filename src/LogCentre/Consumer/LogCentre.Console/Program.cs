@@ -98,6 +98,12 @@ void AddHostModel(IServiceCollection serviceCollection, IConfiguration configura
 
 void AddHttpClientFactory(IServiceCollection serviceCollection, IConfiguration configuration)
 {
+    var apiKey = configuration.GetValue<string>("XApiKey");
+    if (string.IsNullOrWhiteSpace(apiKey))
+    {
+        throw new Exception("Missing API Key");
+    }
+
     var apiConnection = configuration.GetSection("ApiConnectionSettings").Get<ApiConnectionSettings>();
     if (apiConnection == null)
     {
@@ -133,5 +139,6 @@ void AddHttpClientFactory(IServiceCollection serviceCollection, IConfiguration c
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authToken));
         client.DefaultRequestHeaders.AcceptLanguage.Clear();
         client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("en-US"));
+        client.DefaultRequestHeaders.Add("XApiKey", apiKey);
     });
 }

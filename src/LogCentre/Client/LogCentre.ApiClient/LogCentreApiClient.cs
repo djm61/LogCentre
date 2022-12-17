@@ -13,7 +13,9 @@ namespace LogCentre.ApiClient
 {
     public class LogCentreApiClient : JsonApiClient<LogCentreApiClient>, ILogCentreApiClient
     {
-        public LogCentreApiClient(ILogger<LogCentreApiClient> logger, IHttpClientFactory clientFactory, string clientName = ClientLiterals.ApiClientName)
+        public LogCentreApiClient(ILogger<LogCentreApiClient> logger,
+            IHttpClientFactory clientFactory,
+            string clientName = ClientLiterals.ApiClientName)
             : base(logger, clientFactory, clientName)
         {
         }
