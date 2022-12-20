@@ -1,4 +1,4 @@
-﻿namespace LogCentre.Api
+﻿namespace LogCentre.Api.Middleware
 {
     /// <summary>
     /// Api Key Middleware

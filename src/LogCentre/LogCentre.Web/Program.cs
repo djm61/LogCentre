@@ -1,9 +1,12 @@
 using LogCentre.ApiClient;
 using LogCentre.Web.Config;
+using LogCentre.Web.Helpers;
+using LogCentre.Web.Middleware;
 using LogCentre.Web.Services;
 
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 using Serilog;
 
@@ -31,6 +34,9 @@ builder.Services.AddLogging();
 AddHttpClientFactory(builder.Services, configuration);
 AddRenderService(builder.Services);
 
+AddCors(builder.Services, configuration);
+AddHsts(builder.Services, configuration);
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
@@ -43,6 +49,9 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseMiddleware<TraceIdMiddleware>();
+app.UseMiddleware<SecurityHeaderMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -67,6 +76,49 @@ app.UseEndpoints(endpoints =>
 });
 
 app.Run();
+
+void AddCors(IServiceCollection serviceCollection, IConfiguration configuration)
+{
+    var corsAllowOrigin = configuration["CorsAllowOrigin"];
+    var corsOriginAllowed = configuration["CorsOriginAllowed"];
+    if (!string.IsNullOrWhiteSpace(corsAllowOrigin))
+    {
+        bool.TryParse(corsOriginAllowed, out var bCorsOriginAllowed);
+        serviceCollection.AddCors(options =>
+        {
+            var originsRaw = corsAllowOrigin;
+            var originsSplit = originsRaw.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(x => x.TrimEnd('/'))
+            .ToArray();
+            var origins = $"\"{string.Join("\",\"", originsSplit)}\"";
+            options.AddPolicy("Default", policy =>
+            {
+                policy.WithOrigins(origins)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .SetIsOriginAllowed(host => bCorsOriginAllowed)
+                ;
+            });
+        });
+    }
+}
+
+void AddHsts(IServiceCollection serviceCollection, IConfiguration configuration)
+{
+    var securityHeaders = builder.Configuration.GetSection("SecurityHeaders").Get<SecurityHeaders>();
+    serviceCollection.AddSingleton(securityHeaders);
+    bool.TryParse(securityHeaders.StrictTransportSecurity, out var bStrictTransportSecurity);
+    if (bStrictTransportSecurity)
+    {
+        serviceCollection.AddHsts(options =>
+        {
+            options.Preload = true;
+            options.IncludeSubDomains = true;
+            options.MaxAge = TimeSpan.FromDays(365);
+        });
+    }
+}
 
 void AddHttpClientFactory(IServiceCollection serviceCollection, IConfiguration configuration)
 {

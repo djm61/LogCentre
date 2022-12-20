@@ -1,4 +1,4 @@
-﻿namespace LogCentre.Api.Middleware
+﻿namespace LogCentre.Web.Middleware
 {
     /// <summary>
     /// Trace ID Middleware
