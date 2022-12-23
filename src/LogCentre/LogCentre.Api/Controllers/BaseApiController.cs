@@ -1,7 +1,9 @@
 ﻿using LogCentre.Api.Models;
+using LogCentre.Model;
 
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 
 using System.Text.Json;
 
@@ -46,7 +48,19 @@ namespace LogCentre.Api.Controllers
         /// <exception cref="ArgumentNullException">THrows if Logger is null</exception>
         public BaseApiController(ILogger<T> logger)
         {
+            _loggerFactory = new NullLoggerFactory();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        /// <summary>
+        /// Default hello endpoint
+        /// </summary>
+        /// <returns>string</returns>
+        [HttpGet("say-hello")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        public IActionResult SayHello()
+        {
+            return Ok("Hello, everybody!");
         }
 
         /// <summary>
