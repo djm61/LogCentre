@@ -1,4 +1,5 @@
-﻿using LogCentre.Api.Models;
+﻿using LogCentre.Api.Attributes;
+using LogCentre.Api.Models;
 using LogCentre.Model;
 
 using Microsoft.AspNetCore.Diagnostics;
@@ -50,17 +51,6 @@ namespace LogCentre.Api.Controllers
         {
             _loggerFactory = new NullLoggerFactory();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        /// <summary>
-        /// Default hello endpoint
-        /// </summary>
-        /// <returns>string</returns>
-        [HttpGet("say-hello")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-        public IActionResult SayHello()
-        {
-            return Ok("Hello, everybody!");
         }
 
         /// <summary>

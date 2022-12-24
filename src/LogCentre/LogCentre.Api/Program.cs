@@ -137,7 +137,7 @@ if (app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseMiddleware<ApiKeyMiddleware>();
+//app.UseMiddleware<ApiKeyMiddleware>();
 app.UseMiddleware<TraceIdMiddleware>();
 
 app.UseHttpsRedirection();
