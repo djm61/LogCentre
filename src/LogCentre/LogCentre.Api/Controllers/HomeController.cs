@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-
-using LogCentre.Api.Attributes;
-using LogCentre.Services.Interfaces;
+﻿using LogCentre.Api.Attributes;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -27,11 +27,11 @@
       "library": "jqueryui@1.13.2",
       "destination": "wwwroot/lib/jqueryui/"
     },
-    {
-      "provider": "cdnjs",
-      "library": "jquery-datetimepicker@2.5.20",
-      "destination": "wwwroot/lib/jquery-datetimepicker"
-    },
+    //{
+    //  "provider": "cdnjs",
+    //  "library": "jquery-datetimepicker@2.5.20",
+    //  "destination": "wwwroot/lib/jquery-datetimepicker"
+    //},
     {
       "provider": "cdnjs",
       "library": "moment.js@2.29.4",
@@ -66,6 +66,11 @@
       "provider": "cdnjs",
       "library": "summernote@0.8.20",
       "destination": "wwwroot/lib/summernote"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "daterangepicker@3.1.0",
+      "destination": "wwwroot/lib/daterangepicker"
     }
   ]
 }

@@ -5,38 +5,35 @@
 }
 
 @section Head {
-    <link rel="stylesheet" href="~/lib/jquery-datetimepicker/jquery.datetimepicker.min.css" />
+    @*<link rel="stylesheet" href="~/lib/jquery-datetimepicker/jquery.datetimepicker.min.css" />*@
+    <link rel="stylesheet" href="~/lib/daterangepicker/daterangepicker.min.css" />
     <link rel="stylesheet" href="~/lib/jgrowl/jquery.jgrowl.min.css" />
 }
 
 <div class="errorNotification"></div>
 
 <div class="row">
-    <div class="col-2">Start Date</div>
-    <div class="col-2">End Date</div>
-    <div class="col-1">Level</div>
-    <dic class="col-2">Source</dic>
-    <div class="col-3">Log Line</div>
+    <div class="col-3" for="daterange">Date Range</div>
+    <div class="col-1" for="level">Level</div>
+    <dic class="col-2" for="source">Source</dic>
+    <div class="col-3" for="searchText">Log Line</div>
     <div class="col-1"></div>
 </div>
 
 <div class="mb-3 row">
-    <div class="col-2">
-        <input type="text" id="startDate" class="form-control" style="width: 99%" autocomplete="off" />
-    </div>
-    <div class="col-2">
-        <input type="text" id="endDate" class="form-control" style="width: 99%" autocomplete="off" />
+    <div class="col-3">
+        <input type="text" id="daterange" name="daterange" class="form-control" autocomplete="off" placeholder="Date Range" title="Date range" />
     </div>
     <div class="col-1">
-        <select id="level" class="form-control" asp-items="Model.DistinctLevels">
+        <select id="level" class="form-control" asp-items="Model.DistinctLevels" title="Log level - Trace, Debug, Information, Error, Critical, etc">
             <option>Level</option>
         </select>
     </div>
     <div class="col-2">
-        <input type="text" id="source" class="form-control" style="width:99%" autocomplete="off" />
+        <input type="text" id="source" class="form-control" style="width:99%" autocomplete="off" title="Source of the log line, Controller, Service, etc" />
     </div>
     <div class="col-3">
-        <input type="text" id="searchText" class="form-control" style="width: 99%" autocomplete="off" />
+        <input type="text" id="searchText" class="form-control" style="width: 99%" autocomplete="off" title="Text to search for" />
     </div>
     <div class="col-1">
         <input type="submit" id="btnSubmit" value="Search" class="btn btn-primary" />
@@ -50,95 +47,39 @@
 @section Scripts {
     @*https://github.com/stanlemon/jGrowl*@
     <script src="~/lib/momentjs/moment.min.js"></script>
-    <script src="~/lib/jquery-datetimepicker/jquery.datetimepicker.full.min.js"></script>
+    @*<script src="~/lib/jquery-datetimepicker/jquery.datetimepicker.full.min.js"></script>*@
+    <script src="~/lib/daterangepicker/daterangepicker.min.js"></script>
     <script src="~/lib/jgrowl/jquery.jgrowl.min.js"></script>
     <script type="text/javascript">
         const minSearchLength = 3;
-
-        function getDateAsString(date) {
-            window.console.log('getDateAsString() | date[' + date + ']');
-            let str = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
-            window.console.log('getDateAsString() | returning[' + str + ']');
-            return str;
-        }
-
-        function getToday() {
-            window.console.log('getToday()');
-            let today = moment().toDate();
-            let todayStr = getDateAsString(today);
-            window.console.log('getToday() | returning[' + todayStr + ']');
-            return todayStr;
-        }
-
-        function getYesterday() {
-            window.console.log('getYesterday()');
-            let yesterday = moment().subtract(1, 'day').toDate();
-            let yesterdayStr = getDateAsString(yesterday);
-            window.console.log('getYesterday() | returning[' + yesterdayStr + ']');
-            return yesterdayStr;
-        }
 
         $(document).ready(function () {
             $(".dismiss").click(function () {
                 $("#errorNotification").fadeOut("slow");
             });
 
+            $('#daterange').tooltip();
+            $('#level').tooltip();
+            $('#source').tooltip();
+            $('#searchText').tooltip();
+
             //#region JS Datetime picker
-            //see: https://xdsoft.net/jqplugins/datetimepicker/ for documentation
-            $.datetimepicker.setDateFormatter({
-                parseDate: function (date, format) {
-                    var d = moment(date, format);
-                    return d.isValid() ? d.toDate() : false;
-                },
-
-                formatDate: function (date, format) {
-                    return moment(date).format(format);
-                },
-
-                //Optional if using mask input
-                formatMask: function (format) {
-                    return format
-                        .replace(/Y{4}/g, '9999')
-                        .replace(/Y{2}/g, '99')
-                        .replace(/M{2}/g, '19')
-                        .replace(/D{2}/g, '39')
-                        .replace(/H{2}/g, '29')
-                        .replace(/m{2}/g, '59')
-                        .replace(/s{2}/g, '59');
+            $('#daterange').daterangepicker({
+                timePicker: true,
+                startDate: moment().add(-1, 'day'),
+                endDate: moment(),
+                maxDate: moment(),
+                locale: {
+                    format: 'YYYY-MM-DD hh:mm A'
                 }
             });
-
-            $('#startDate').datetimepicker({
-                format: "YYYY-MM-DD HH:mm:ss",
-                formatDate: "YYYY-MM-DD",
-                timeFormat: "HH:mm:ss",
-                mask: true,
-                onShow: function (ct) {
-                    this.setOptions({
-                        maxDate: $('#endDate').val() ? $('#endDate').val() : false
-                    })
-                }
-            });
-
-            $('#endDate').datetimepicker({
-                format: 'YYYY-MM-DD HH:mm:ss',
-                formatDate: "YYYY-MM-DD",
-                timeFormat: "HH:mm:ss",
-                mask: true,
-                onShow: function (ct) {
-                    this.setOptions({
-                        minDate: $('#startDate').val() ? $('#startDate').val() : false
-                    })
-                }
-            });
-
-            $('#startDate').val(getYesterday());
-            $('#endDate').val(getToday());
             //#endregion
 
             $('#btnSubmit').click(function () {
-                let fromDate = $('#startDate').val();
-                let endDate = $('#endDate').val();
+                let daterange = $('#daterange').val();
+                let ranges = daterange.split(' - ');
+                let fromDate = ranges[0];
+                let endDate = ranges[1];
                 let level = $('#level').val();
                 let source = '';
                 let searchText = $('#searchText').val();
