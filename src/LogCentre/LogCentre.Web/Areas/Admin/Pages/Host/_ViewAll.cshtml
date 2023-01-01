@@ -3,60 +3,60 @@
 @model IEnumerable<HostModel>
 
 <div class="table-responsive">
-<table class="table table-bordered table-striped table-hover" id="hostTable">
-    <caption>List of Hosts</caption>
-    <thead>
-        <tr>
-            <th>
-                Id
-            </th>
-            <th>
-                Name
-            </th>
-            <th>
-                Description
-            </th>
-            <th class="d-none">
-                Active
-            </th>
-            <th class="d-none">
-                Deleted
-            </th>
-            <th>&nbsp;</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Count() > 0)
-        {
-            @foreach (var host in Model)
+    <table class="table table-bordered table-striped table-hover" id="hostTable">
+        <caption>List of Hosts</caption>
+        <thead>
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Description
+                </th>
+                <th class="d-none">
+                    Active
+                </th>
+                <th class="d-none">
+                    Deleted
+                </th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count() > 0)
             {
-                <tr>
-                    <td>
-                        @host.Id
-                    </td>
-                    <td>
-                        @host.Name
-                    </td>
-                    <td>
-                        @host.Description
-                    </td>
-                    <td class="d-none">
-                        @host.Active
-                    </td>
-                    <td class="d-none">
-                        @host.Deleted
-                    </td>
-                    <td class="text-right">
-                        <a onclick="jQueryModalGet('?handler=CreateOrEdit&id=@host.Id', 'Edit Host')" class="btn btn-info text-white">Edit</a>
-                        <form method="post" asp-page="Index" asp-route-id="@host.Id" asp-page-handler="Delete" onsubmit="return jQueryModalDelete(this)" class="d-inline">
-                            <button type="submit" class="btn btn-danger text-white">Delete</button>
-                        </form>
-                    </td>
-                </tr>
+                @foreach (var host in Model)
+                {
+                    <tr>
+                        <td>
+                            @host.Id
+                        </td>
+                        <td>
+                            @host.Name
+                        </td>
+                        <td>
+                            @host.Description
+                        </td>
+                        <td class="d-none">
+                            @host.Active
+                        </td>
+                        <td class="d-none">
+                            @host.Deleted
+                        </td>
+                        <td class="text-right">
+                            <a onclick="jQueryModalGet('?handler=CreateOrEdit&id=@host.Id', 'Edit Host')" class="btn btn-info text-white">Edit</a>
+                            <form method="post" asp-page="Index" asp-route-id="@host.Id" asp-page-handler="Delete" onsubmit="return jQueryModalDelete(this)" class="d-inline">
+                                <button type="submit" class="btn btn-danger text-white">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
 </div>
 
 <script>

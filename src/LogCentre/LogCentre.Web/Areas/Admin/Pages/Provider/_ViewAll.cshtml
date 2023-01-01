@@ -53,7 +53,7 @@
                             @provider.Deleted
                         </td>
                         <td class="text-right">
-                            <a onclick="jQueryModalGet('?handler=CreateOrEdit&id=@provider.Id', 'Edit Provider')" class="btn btn-info text-white">Edit</a>
+                            <a onclick="loadEditModal(@provider.Id)" class="btn btn-info text-white">Edit</a>
                             <form method="post" asp-page="Index" asp-route-id="@provider.Id" asp-page-handler="Delete" onsubmit="return jQueryModalDelete(this)" class="d-inline">
                                 <button type="submit" class="btn btn-danger text-white">Delete</button>
                             </form>

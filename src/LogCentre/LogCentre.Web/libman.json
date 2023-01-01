@@ -63,7 +63,7 @@
     //  "destination": "wwwroot/lib/tinymce"
     //}
     {
-      "provider": "cdnjs",
+      "provider": "jsdelivr",
       "library": "summernote@0.8.20",
       "destination": "wwwroot/lib/summernote"
     },

@@ -88,7 +88,7 @@ namespace LogCentre.Web.Areas.Admin.Pages.Host
             finally
             {
                 stopwatch.Stop();
-                Logger.LogInformation("*** OnGetCreateOrEditAsyn took [{0}]", stopwatch.Elapsed);
+                Logger.LogInformation("*** OnGetCreateOrEditAsync took [{0}]", stopwatch.Elapsed);
             }
         }
 

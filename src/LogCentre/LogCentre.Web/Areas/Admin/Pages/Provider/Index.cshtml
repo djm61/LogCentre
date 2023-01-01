@@ -1,4 +1,5 @@
 ﻿@page
+@using LogCentre.Model
 @model LogCentre.Web.Areas.Admin.Pages.Provider.IndexModel
 @{
     ViewData["Title"] = "Providers";
@@ -9,25 +10,119 @@
     @*<link type="text/css" href="~/lib/quill/quill.core.css" />*@
     <link type="text/css" href="~/lib/summernote/summernote.min.css" />
     <link type="text/css" href="~/lib/summernote/summernote-bs5.min.css" />
+    <link rel="stylesheet" href="~/lib/jgrowl/jquery.jgrowl.min.css" />
+    <style type="text/css">
+        .regexTest {
+            height: 150px;
+        }
+    </style>
 }
 
 <div class="card">
     <div class="col-sm-12" style="padding: 20px">
-        <a onclick="jQueryModalGet('?handler=CreateOrEdit','Create Provider')" class="btn bg-success">
+        <a id="create" class="btn bg-success">
             Create
         </a>
         <a id="reload" class="btn bg-warning">
             Reload
         </a>
     </div>
-    <div id="viewAll" class="card-body table-responsive"></div>
+    <div id="viewAll" class="card-body"></div>
 </div>
 
+<!-- Create/Edit Modal -->
+<div class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" id="createEditModal">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalHeader"></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div id="notifications" class="mb-3 text-danger"></div>
+
+                <div class="mb-3 row" id="staticId">
+                    <label for="staticId" class="col-sm-2 col-form-label">Id</label>
+                    <div class="col-sm-10">
+                        <input type="text" readonly class="form-control-plaintext" id="staticIdValue" placeholder="Id" />
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-sm-2 form-label">Name</label>
+                    <div class="col-md-10">
+                        <input autocomplete="off" id="name" name="name" class="form-control" placeholder="Name of Provider" />
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-sm-2 form-label">Description</label>
+                    <div class="col-md-10">
+                        <input autocomplete="off" id="description" name="description" class="form-control" placeholder="Provider Description" />
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-sm-2 form-label">Regex</label>
+                    <div class="col-md-10">
+                        <input autocomplete="off" id="regex" name="regex" class="form-control" placeholder="Regex" />
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <div class="col-sm-2"></div>
+                    <div class="col-md-10">
+                        @*<textarea autocomplete="off" id="regexTest" name="editordata" class="form-control regexTest" placeholder="Enter sample logs to be parsed here"></textarea>*@
+                        @*<div id="regexTest" name="editordata" autocomplete="off"></div>*@
+                        <textarea autocomplete="off" id="regexTest" name="editordata" class="form-control" placeholder="Enter sample logs to be parsed here"></textarea>
+                    </div>
+                </div>
+
+                <div class="mb-3 row d-none">
+                    <label class="col-sm-2 form-label">Active</label>
+                    <div class="col-md-10">
+                        <select id="active" name="active" class="form-control">
+                            <option>Active</option>
+                            <option value="@ModelLiterals.Yes">@ModelLiterals.Yes</option>
+                            <option value="@ModelLiterals.No">@ModelLiterals.No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3 row d-none">
+                    <label class="col-sm-2 form-label">Deleted</label>
+                    <div class="col-md-10">
+                        <select id="deleted" name="deleted" class="form-control">
+                            <option>Deleted</option>
+                            <option value="@ModelLiterals.Yes">@ModelLiterals.Yes</option>
+                            <option value="@ModelLiterals.No">@ModelLiterals.No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-md-3">
+                    </div>
+                </div>
+
+                <div class="form-group justify-content-between">
+                    <button type="button" class="btn btn-secondary close-button" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary save-button" id="btnSave">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Create/Edit Modal -->
 @section Scripts {
     @*<script type="text/javascript" src="~/lib/quill/quill.core.min.js"></script>*@
     @*<script type="text/javascript" src="~/lib/tinymce/tinymce.min.js"></script>*@
     <script type="text/javascript" src="~/lib/summernote/summernote.min.js"></script>
     <script type="text/javascript" src="~/lib/summernote/summernote-bs5.min.js"></script>
+    <script src="~/lib/jgrowl/jquery.jgrowl.min.js"></script>
     <script type="text/javascript">
         function loadData() {
             window.console.log('loadData()');
@@ -35,8 +130,234 @@
             $('#viewAll').load('?handler=ViewAllPartial');
         }
 
+        function getBackgroundColour(i) {
+            window.console.log(`getBackgroundColour() | i[${i}]`);
+            //might need to increase this
+            //const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#00ffff", "#ff00ff"];
+            const colours = ['#8BD3E6', '#FF6D6A', '#E9EC6B', '#EFBE7D', '#B1A2CA']
+            return colours[i] || '#fff';
+        }
+
+        function getColour(i) {
+            window.console.log(`getColour() | i[${i}]`);
+            const colours = ['#000', '#000', '#000', '#000', '#000']
+            return colours[i] || '#000';
+        }
+
+        function regexParser(regex, textarea) {
+            window.console.log(`regexParser() | regex[${regex}]`);
+            if (regex.length === 0) {
+                window.console.log('regexParser() | regex length is 0, return');
+                return;
+            }
+
+            if (!textarea) {
+                window.console.log('regexParser() | textarea is invalid, return');
+                return;
+            }
+
+            if (textarea) {
+                var value = $(textarea).val();
+                if (!value || value.length === 0) {
+                    window.console.log('regexParser() | textarea value is invalid or length is 0, return');
+                    return;
+                }
+            }
+
+            const regexp = new RegExp(regex);
+            const result = regexp.test($(textarea).val());
+            if (result) {
+                debugger;
+                const matches = $(textarea).val().match(regexp);
+                for (let i = 0; i < matches.length; i++) {
+                    const colour = getColour(i);
+                    const backgroundColour = getBackgroundColour(i);
+                    window.console.log(`regexParser() | colour[${colour}], bgColour[${backgroundColour}]`);
+                    const replacement = `<span style="color: ${colour}; background-color: ${backgroundColour}">${matches[i]}</span>`;
+                    const textValue = $(textarea).val();
+                    //if (textValue.indexOf(replacement) != -1) {
+                    //    window.console.log('regexParser() | match already exists, don\'t match again');
+                    //} else {
+                    if (textValue.indexOf(replacement) != -1) {
+                        window.console.log(`regexParser() | match already exists, rever it back to [${matches[i]}] in order for it to be replaced`);
+                        $(textarea).val($(textarea).val().replace(replacement, matches[i]));
+                    }
+
+                    window.console.log('regexParser() | match does not exist, replace with colour!');
+                    $(textarea).html($(textarea).val().replace(matches[i], replacement));
+                    //}
+                }
+            }
+        }
+
+        function clearModalFields() {
+            window.console.log('clearModalFields()');
+            $('#staticIdValue').val('');
+            $('#name').val('');
+            $('#description').val('');
+            $('#regex').val('');
+            $('#active option:first').prop('selected', true);
+            $('#deleted option:first').prop('selected', true);
+            $('#notifications').empty();
+        }
+
+        function loadEditModal(id) {
+            window.console.log(`loadEditModal() | id[${id}]`);
+            var model = {
+                id: id
+            };
+            var jsonData = JSON.stringify(model);
+
+            $.ajax({
+                type: 'get',
+                cache: false,
+                dataType: 'json',
+                url: '?handler=LoadProvider',
+                data: model,
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                beforeSend: function () {
+                    window.console.log('create post before send');
+                    $('#notifications').empty();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    window.console.log('btnSave Click error xhr[' + xhr + ']');
+                    window.console.log('btnSave Click error ajaxOptions[' + ajaxOptions + ']');
+                    window.console.log('btnSave Click error thrownError[' + thrownError + ']');
+                },
+                success: function (data) {
+                    window.console.log(data);
+                    if (data && data.data) {
+                        $('#staticIdValue').val(data.data.id);
+                        //$('#staticIdValue').text(data.data.id);
+                        //$('#staticId').html(data.id);
+                        $('#name').val(data.data.name);
+                        $('#description').val(data.data.description);
+                        $('#regex').val(data.data.regex);
+                        $('select[name="active"] option[value="' + data.data.active + '"]').prop('selected', true);
+                        $('select[name="deleted"] option[value="' + data.data.deleted + '"]').prop('selected', true);
+                        $('#createEditModal').modal('show');
+                    }
+                }
+            });
+        }
+
+        function regexTestChange(e) {
+            window.console.log(`regexTestChange() | e[${e}]`);
+            var regex = $('#regex').val();
+            regexParser(regex, e);
+        }
+
         $(document).ready(function () {
+            const textarea = $('#regexTest');
             loadData();
+
+            $('#create').on('click', function () {
+                $('#staticId').hide();
+                $('select[name="active"] option[value="Y"]').prop('selected', true);
+                $('select[name="deleted"] option[value="N"]').prop('selected', true);
+                $('#notifications').empty();
+                $('#createEditModal').modal('show');
+            });
+
+            $('#reload').on('click', function () {
+                loadData();
+            });
+
+            $('#btnSave').on('click', function () {
+                let id = parseInt($('#staticIdValue').val()) || 0;
+                let name = $('#name').val();
+                let description = $('#description').val();
+                let regex = $('#regex').val();
+                let active = $('#active option:selected').text();
+                let deleted = $('#deleted option:selected').text();
+
+                let model = {
+                    Id: id,
+                    Name: name,
+                    Description: description,
+                    Regex: regex,
+                    Active: active,
+                    Deleted: deleted
+                };
+                let jsonData = JSON.stringify(model);
+
+                //ajax call
+                $.ajax({
+                    type: 'post',
+                    cache: false,
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    url: '?handler=CreateOrEditAsdf',
+                    data: jsonData,
+                    headers: {
+                        RequestVerificationToken:
+                            $('input:hidden[name="__RequestVerificationToken"]').val()
+                    },
+                    beforeSend: function () {
+                        window.console.log('create post before send');
+                        $('#notifications').empty();
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        window.console.log('btnSave Click error xhr[' + xhr + ']');
+                        window.console.log('btnSave Click error ajaxOptions[' + ajaxOptions + ']');
+                        window.console.log('btnSave Click error thrownError[' + thrownError + ']');
+                    },
+                    success: function (data) {
+                        if (data) {
+                            if (data.isValid) {
+                                $('#createEditModal').modal('hide');
+                                clearModalFields();
+                                loadData();
+                                return;
+                            } else if (data.errors) {
+                                $.jGrowl(data.errors, { sticky: true });
+                                $('#notifications').text(data.errors);
+                            }
+                        } else {
+                            $('#notifications').val('Something happened');
+                        }
+                    }
+                });
+            });
+
+            $('#regex').on('keyup change', function () {
+                window.console.log('regex change!');
+                var regex = $(this).val();
+                regexParser(regex, textarea);
+            });
+
+            $('#regexTest').on('keyup change', function () {
+                window.console.log('regexTest change!');
+                var value = $(this).val();
+                var regex = $('#regex').val();
+                regexParser(regex, textarea);
+            });
+
+            $('#regexTest').on('summernote.chage', function (we, contents, $editable) {
+                debugger;
+                window.console.log('content changed!');
+            });
+
+            $('#regexTest').summernote({
+                height: 150,
+                width: '100%',
+                //minHeight: null,
+                //maxHeight: null,
+                //focus: true,
+                toolbar: [],
+                disableDragAndDrop: true,
+                shortcuts: false,
+                //styleWithSpan: false,
+                callbacks: {
+                    onChange: function (contents, $editable) {
+                        debugger;
+                        window.console.log('onChange:', contents, $editable);
+                    }
+                }
+            });
         });
     </script>
 }

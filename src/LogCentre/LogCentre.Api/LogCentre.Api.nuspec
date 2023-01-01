@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>LogCentre.Api</id>
-		<version>0.0.3</version>
+		<version>0.0.4</version>
 		<title>Log Centre API</title>
 		<authors>Mike Clarkson (mike.clarkson@gmail.com)</authors>
 		<owners>Mike Clarkson (mike.clarkson@gmail.com)</owners>

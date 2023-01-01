@@ -1,12 +1,14 @@
 using LogCentre.ApiClient;
 using LogCentre.Model;
+using LogCentre.Web.Helpers;
 using LogCentre.Web.Models;
 using LogCentre.Web.Services;
 
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+
 using System.Diagnostics;
-using LogCentre.Web.Helpers;
+using System.Text.Json;
 
 namespace LogCentre.Web.Areas.Admin.Pages.Provider
 {
@@ -87,13 +89,51 @@ namespace LogCentre.Web.Areas.Admin.Pages.Provider
             finally
             {
                 stopwatch.Stop();
-                Logger.LogInformation("*** OnGetCreateOrEditAsyn took [{0}]", stopwatch.Elapsed);
+                Logger.LogInformation("*** OnGetCreateOrEditAsync took [{0}]", stopwatch.Elapsed);
             }
         }
 
-        public async Task<JsonResult> OnPostCreateOrEditAsync(long id, [Bind("Name,Description,Regex,Active,Deleted,Id")] ProviderModel provider)
+        public async Task<JsonResult> OnGetLoadProviderAsync(long id = 0)
         {
-            Logger.LogDebug("OnPostCreateOrEditAsync() | id [{0}], provider [{1}]", id, provider);
+            Logger.LogDebug("OnGetLoadProviderAsync() | id[{id}]", id);
+            var stopwatch = Stopwatch.StartNew();
+
+            try
+            {
+                if (id == 0)
+                {
+                    var jsonData = JsonSerializer.Serialize(new ProviderModel());
+                    return new JsonResult(new { isValid = true, data = jsonData, errors = "" });
+                }
+                else
+                {
+                    var model = await ApiClient.GetProviderByIdAsync(id);
+                    if (model == null)
+                    {
+                        model = new ProviderModel();
+                    }
+
+                    var jsonData = JsonSerializer.Serialize(model);
+                    return new JsonResult(new { isValid = true, data = model, errors = "" });
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, $"OnGetLoadProviderAsync() error [{ex}]");
+                var jsonData = JsonSerializer.Serialize(new ProviderModel());
+                return new JsonResult(new { isValid = false, data = jsonData, errors = ex.Message });
+            }
+            finally
+            {
+                stopwatch.Stop();
+                Logger.LogInformation("*** OnGetLoadProviderAsync took [{0}]", stopwatch.Elapsed);
+            }
+        }
+
+        public async Task<JsonResult> OnPostCreateOrEditAsdfAsync([FromBody] ProviderModel provider)
+        {
+            Logger.LogDebug("OnPostCreateOrEditAsync() | provider [{0}]", provider);
+            var id = provider.Id;
             var stopwatch = Stopwatch.StartNew();
 
             try
@@ -110,8 +150,7 @@ namespace LogCentre.Web.Areas.Admin.Pages.Provider
                         catch (Exception ex)
                         {
                             Logger.LogError($"OnPostCreateOrEditAsync() | creating new provider error[{ex}]", ex);
-                            var html = await RenderService.ToStringAsync("_CreateOrEdit", provider);
-                            return new JsonResult(new { isValid = false, html = html, errors = ex.Message });
+                            return new JsonResult(new { isValid = false, errors = ex.Message });
                         }
                     }
                     else
@@ -123,24 +162,22 @@ namespace LogCentre.Web.Areas.Admin.Pages.Provider
                         catch (Exception ex)
                         {
                             Logger.LogError($"OnPostCreateOrEditAsync() | editing provider error[{ex}]", ex);
-                            var html = await RenderService.ToStringAsync("_CreateOrEdit", provider);
-                            return new JsonResult(new { isValid = false, html = html, errors = ex.Message });
+                            return new JsonResult(new { isValid = false, errors = ex.Message });
                         }
                     }
 
-                    return await LoadAsync();
+                    return new JsonResult(new { isValid = true, errors = "" });
                 }
                 else
                 {
                     var modelStateErrors = ModelStateHelper.GetModelStateErrors(ModelState);
-                    var html = await RenderService.ToStringAsync("_CreateOrEdit", provider);
-                    return new JsonResult(new { isValid = false, html = html, errors = modelStateErrors });
+                    return new JsonResult(new { isValid = false, errors = modelStateErrors });
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, $"OnPostCreateOrEditAsync() error [{ex}]");
-                return new JsonResult(new { isValid = false, html = await RenderService.ToStringAsync("_CreateOrEdit", provider) });
+                return new JsonResult(new { isValid = false });
             }
             finally
             {
