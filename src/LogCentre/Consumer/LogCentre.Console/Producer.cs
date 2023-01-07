@@ -3,8 +3,11 @@ using LogCentre.Console.Models;
 using LogCentre.Model;
 using LogCentre.Model.Log;
 
+using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.Logging;
 
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Channels;
 
@@ -16,6 +19,11 @@ namespace LogCentre.Console
         private readonly ChannelWriter<LineModel> _channelWriter;
         private readonly ILogCentreApiClient _client;
         private readonly long _hostId;
+
+        private LogSourceModel _logSource;
+        private IList<FileModel> _fileModels;
+        private FileInfo _file;
+        private Regex _regex;
 
         public Producer(ILoggerFactory loggerFactory,
             ChannelWriter<LineModel> channelWriter,
@@ -39,9 +47,9 @@ namespace LogCentre.Console
                 var logSources = await _client.GetLogSourcesByHostAsync(_hostId);
                 var task = Task.Factory.StartNew(async () =>
                 {
-                    Regex regex;
                     foreach (var logSource in logSources)
                     {
+                        _logSource = logSource;
                         var provider = logSource.Provider;
                         if (provider == null)
                         {
@@ -55,44 +63,32 @@ namespace LogCentre.Console
                             continue;
                         }
 
-                        regex = new Regex(provider.Regex);
+                        _regex = new Regex(provider.Regex);
                         try
                         {
-                            var fileModels = await _client.GetFilesByLogSourceIdAsync(logSource.Id);
+                            _fileModels = await _client.GetFilesByLogSourceIdAsync(logSource.Id);
                             var directory = new DirectoryInfo(logSource.Path);
                             foreach (var file in directory.GetFiles().OrderBy(x => x.LastWriteTime))
                             {
-                                var fileModel = await GetOrCreateFileModelAsync(fileModels, logSource, file);
-                                if (fileModel == null)
-                                {
-                                    _logger.LogWarning("Producing files doesn't have a matching file, what?");
-                                    continue;
-                                }
-
-                                //check if file is already fully read,
-                                //if yes, skip file,
-                                //if no, find last read line and then read from there (line count maybe?)
-                                using var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                                using var sr = new StreamReader(fs);
-                                var lines = new List<string>();
-                                while (!sr.EndOfStream)
-                                {
-                                    var line = sr.ReadLine();
-                                    lines.Add(line);
-                                }
-
-                                var lineCount = await _client.GetLogLineCountByFileIdAsync(fileModel.Id);
-                                if (lines.Count == lineCount)
-                                {
-                                    continue;
-                                }
-
-                                await CreateLineAsync(lines, lineCount, regex, fileModel);
-                                fileModel.FileComplete = ModelLiterals.Yes;
-                                await _client.UpdateLogFileAsync(fileModel);
+                                await ReadFileAsync(file);
                             }
 
                             //todo create a file system watcher for the last file to keep reading the file
+                            var watcher = new FileSystemWatcher(logSource.Path)
+                            {
+                                IncludeSubdirectories = true,
+                                NotifyFilter = NotifyFilters.Attributes |
+                                NotifyFilters.CreationTime |
+                                NotifyFilters.DirectoryName |
+                                NotifyFilters.FileName |
+                                NotifyFilters.LastAccess |
+                                NotifyFilters.LastWrite |
+                                NotifyFilters.Security |
+                                NotifyFilters.Size
+                            };
+
+                            watcher.Changed += new FileSystemEventHandler(OnChanged);
+                            watcher.Created += new FileSystemEventHandler(OnChanged);
                         }
                         catch (Exception ex)
                         {
@@ -109,23 +105,67 @@ namespace LogCentre.Console
             }
         }
 
-        private async Task<FileModel> GetOrCreateFileModelAsync(IList<FileModel> fileModels, LogSourceModel logSource, FileInfo file)
+        /// <summary>
+        /// Reads the current file
+        /// </summary>
+        /// <param name="file">Current FileInfo file</param>
+        /// <returns>void - nothing</returns>
+        private async Task ReadFileAsync(FileInfo file)
         {
-            _logger.LogDebug("GetOrCreateFileModelAsync() | fileModels[{0}], logSource[{1}], fileFullName[{2}]", fileModels.Count, logSource, file.FullName);
-            var fileModel = fileModels.FirstOrDefault(x => x.Name == file.Name);
+            _logger.LogDebug("ReadFileAsync() | file[{0}]", file);
+            var fileModel = await GetOrCreateFileModelAsync(_fileModels);
+            if (fileModel == null)
+            {
+                _logger.LogWarning("ReadFileAsync() | Producing files doesn't have a matching file, what?");
+                return;
+            }
+
+            //check if file is already fully read,
+            //if yes, skip file,
+            //if no, find last read line and then read from there (line count maybe?)
+            using var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var sr = new StreamReader(fs);
+            var lines = new List<string>();
+            while (!sr.EndOfStream)
+            {
+                var line = sr.ReadLine();
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+
+                lines.Add(line.Trim());
+            }
+
+            var lineCount = await _client.GetLogLineCountByFileIdAsync(fileModel.Id);
+            if (lines.Count == lineCount)
+            {
+                _logger.LogInformation("ReadFileAsync() | lineCount[{0}] matches stored lineCount[{1}]", lines.Count, lineCount);
+                return;
+            }
+
+            await CreateLineAsync(lines, lineCount, fileModel);
+            fileModel.FileComplete = ModelLiterals.Yes;
+            await _client.UpdateLogFileAsync(fileModel);
+        }
+
+        private async Task<FileModel> GetOrCreateFileModelAsync(IList<FileModel> fileModels)
+        {
+            _logger.LogDebug("GetOrCreateFileModelAsync() | fileModels[{0}], logSource[{1}], fileFullName[{2}]", fileModels.Count, _logSource, _file.FullName);
+            var fileModel = fileModels.FirstOrDefault(x => x.Name == _file.Name);
             if (fileModel == null)
             {
                 //we don't have the file, read it!
                 fileModel = new FileModel
                 {
-                    LogSourceId = logSource.Id,
-                    Name = file.Name,
+                    LogSourceId = _logSource.Id,
+                    Name = _file.Name,
                     LastUpdatedBy = $"Producer-{_hostId}"
                 };
 
                 await _client.CreateLogFileAsync(fileModel);
-                fileModels = await _client.GetFilesByLogSourceIdAsync(logSource.Id);
-                fileModel = fileModels.FirstOrDefault(x => x.Name == file.Name);
+                fileModels = await _client.GetFilesByLogSourceIdAsync(_logSource.Id);
+                fileModel = fileModels.FirstOrDefault(x => x.Name == _file.Name);
                 if (fileModel == null)
                 {
                     _logger.LogError("Unable to read back the file that was just created, what?");
@@ -136,7 +176,7 @@ namespace LogCentre.Console
             return fileModel;
         }
 
-        private async Task CreateLineAsync(IList<string> lines, long lineCount, Regex regex, FileModel fileModel)
+        private async Task CreateLineAsync(IList<string> lines, long lineCount, FileModel fileModel)
         {
             _logger.LogDebug("CreateLineAsync() | linesCount[{0}]", lines.Count);
             var currentRow = 0;
@@ -159,7 +199,7 @@ namespace LogCentre.Console
                     continue;
                 }
 
-                var matches = regex.Match(line);
+                var matches = _regex.Match(line);
                 if (matches.Success)
                 {
                     grouping = Guid.NewGuid();
@@ -189,6 +229,13 @@ namespace LogCentre.Console
 
                 await _channelWriter.WriteAsync(logLineModel);
             }
+        }
+
+        private void OnChanged(object source, FileSystemEventArgs e)
+        {
+            _logger.LogDebug("OnChanged() | filePath[{0}]", e.FullPath);
+            var fileInfo = new FileInfo(e.FullPath);
+            ReadFileAsync(fileInfo).GetAwaiter().GetResult();
         }
     }
 }
