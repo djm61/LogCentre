@@ -6,17 +6,6 @@
     public class LogSourceModel : BaseModel
     {
         /// <summary>
-        /// Log Source
-        /// </summary>
-        public LogSourceModel()
-        {
-            Name = string.Empty;
-            Path = string.Empty;
-            Host = null;
-            Provider = null;
-        }
-
-        /// <summary>
         /// Id of the Host
         /// </summary>
         public long HostId { get; set; }
@@ -29,22 +18,22 @@
         /// <summary>
         /// Name of the Lost Source
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Path for the Log Source
         /// </summary>
-        public string Path { get; set; }
+        public string Path { get; set; } = string.Empty;
 
         /// <summary>
         /// Referenced Host
         /// </summary>
-        public HostModel? Host { get; set; }
+        public HostModel? Host { get; set; } = null;
 
         /// <summary>
         /// Referenced Provider
         /// </summary>
-        public ProviderModel? Provider { get; set; }
+        public ProviderModel? Provider { get; set; } = null;
 
         public override string ToString()
         {

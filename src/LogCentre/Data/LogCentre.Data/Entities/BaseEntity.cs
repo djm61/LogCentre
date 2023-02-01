@@ -25,7 +25,7 @@ namespace LogCentre.Data.Entities
         public string LastUpdatedBy { get; set; } = string.Empty;
 
         [Required]
-        public DateTime RowVersion { get; set; }
+        public DateTime RowVersion { get; set; } = DateTime.UtcNow;
 
         public override string ToString()
         {

@@ -35,9 +35,9 @@ namespace LogCentre.Data.Entities.Log
         public string FullLine { get; set; } = string.Empty;
 
         [Required]
-        public Guid Grouping { get; set; }
+        public Guid Grouping { get; set; } = Guid.Empty;
 
-        public File File { get; set; }
+        public File File { get; set; } = new File();
 
         public override string ToString()
         {

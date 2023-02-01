@@ -6,29 +6,19 @@
     public class ProviderModel : BaseModel
     {
         /// <summary>
-        /// Provider
-        /// </summary>
-        public ProviderModel()
-        {
-            Name = string.Empty;
-            Description = string.Empty;
-            Regex = string.Empty;
-        }
-
-        /// <summary>
         /// Name of the Provider
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Description of the Provider
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Regex to parse the Provider
         /// </summary>
-        public string Regex { get; set; }
+        public string Regex { get; set; } = string.Empty;
 
         public override string ToString()
         {

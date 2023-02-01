@@ -4,29 +4,22 @@ namespace LogCentre.Data.Entities.Log
 {
     public class File : BaseEntity
     {
-        public File()
-        {
-            Name = string.Empty;
-            FileComplete = DataLiterals.No;
-            Lines = new HashSet<Line>();
-        }
-
         [Required]
         public long LogSourceId { get; set; }
 
         [Required]
         [StringLength(DataLiterals.NameLength)]
         [MaxLength(DataLiterals.NameLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [StringLength(DataLiterals.FlagLength)]
         [MaxLength(DataLiterals.FlagLength)]
-        public string FileComplete { get; set; }
+        public string FileComplete { get; set; } = string.Empty;
 
-        public LogSource LogSource { get; set; }
+        public LogSource LogSource { get; set; } = new LogSource();
 
-        public ICollection<Line> Lines { get; set; }
+        public ICollection<Line> Lines { get; set; } = new HashSet<Line>();
 
         public override string ToString()
         {

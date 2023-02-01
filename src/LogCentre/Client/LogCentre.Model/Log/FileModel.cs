@@ -6,15 +6,6 @@
     public class FileModel : BaseModel
     {
         /// <summary>
-        /// Log File
-        /// </summary>
-        public FileModel()
-        {
-            Name = string.Empty;
-            FileComplete = ModelLiterals.No;
-        }
-
-        /// <summary>
         /// Id of the Log Source
         /// </summary>
         public long LogSourceId { get; set; }
@@ -22,17 +13,17 @@
         /// <summary>
         /// Name of the Log File
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// File complete flag
         /// </summary>
-        public string FileComplete { get; set; }
+        public string FileComplete { get; set; } = string.Empty;
 
         /// <summary>
         /// Referenced Log Source
         /// </summary>
-        public LogSourceModel? LogSource { get; set; }
+        public LogSourceModel? LogSource { get; set; } = null;
 
         public override string ToString()
         {
