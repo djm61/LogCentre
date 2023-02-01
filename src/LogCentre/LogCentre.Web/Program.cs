@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
+using OpenTelemetry;
+using OpenTelemetry.Trace;
+
 using Serilog;
 
 using System.Net.Http.Headers;
@@ -31,6 +34,7 @@ builder.Host.ConfigureLogging((context, logging) =>
 builder.Services.AddLogging();
 
 // Add services to the container.
+AddOpenTelemetry(builder.Services);
 AddHttpClientFactory(builder.Services, configuration);
 AddRenderService(builder.Services);
 
@@ -118,6 +122,19 @@ void AddHsts(IServiceCollection serviceCollection, IConfiguration configuration)
             options.MaxAge = TimeSpan.FromDays(365);
         });
     }
+}
+
+void AddOpenTelemetry(IServiceCollection serviceCollection)
+{
+    serviceCollection.AddOpenTelemetry()
+        .WithTracing(builder => builder
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddSqlClientInstrumentation()
+            //.AddJaegerExporter()
+            .AddConsoleExporter()
+        )
+        .StartWithHost();
 }
 
 void AddHttpClientFactory(IServiceCollection serviceCollection, IConfiguration configuration)

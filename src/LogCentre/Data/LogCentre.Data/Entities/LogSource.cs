@@ -6,11 +6,6 @@ namespace LogCentre.Data.Entities
 {
     public class LogSource : BaseEntity
     {
-        public LogSource()
-        {
-            Files = new HashSet<Log.File>();
-        }
-
         [Required]
         public long HostId { get; set; }
 
@@ -20,16 +15,16 @@ namespace LogCentre.Data.Entities
         [Required]
         [StringLength(DataLiterals.NameLength)]
         [MaxLength(DataLiterals.NameLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [StringLength(DataLiterals.PathLength)]
         [MaxLength(DataLiterals.PathLength)]
-        public string Path { get; set; }
+        public string Path { get; set; } = string.Empty;
 
-        public Host Host { get; set; }
-        public Provider Provider { get; set; }
-        public ICollection<Log.File> Files { get; set; }
+        public Host Host { get; set; } = new Host();
+        public Provider Provider { get; set; } = new Provider();
+        public ICollection<Log.File> Files { get; set; } = new HashSet<Log.File>();
 
         public override string ToString()
         {

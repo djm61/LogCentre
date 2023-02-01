@@ -7,11 +7,11 @@ namespace LogCentre.Data.Entities
         [Required]
         [StringLength(DataLiterals.NameLength)]
         [MaxLength(DataLiterals.NameLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [StringLength(DataLiterals.DescriptionLength)]
         [MaxLength(DataLiterals.DescriptionLength)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         public ICollection<LogSource> LogSources { get; set; } = new HashSet<LogSource>();
 

@@ -15,6 +15,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
+using OpenTelemetry;
+using OpenTelemetry.Trace;
+
 using Serilog;
 
 using System.Reflection;
@@ -50,6 +53,7 @@ builder.Services.AddDistributedCache(cachingSettings);
 
 // Add services to the container.
 AddEntityServices(builder.Services);
+AddOpenTelemetry(builder.Services);
 builder.Services.AddTransient<IDistributedCacheService, DistributedCacheService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -159,6 +163,19 @@ void AddEntityServices(IServiceCollection serviceCollection)
     serviceCollection.AddTransient<IFileService, FileService>();
     serviceCollection.AddTransient<ILineService, LineService>();
     serviceCollection.AddTransient<ISearchService, SearchService>();
+}
+
+void AddOpenTelemetry(IServiceCollection serviceCollection)
+{
+    serviceCollection.AddOpenTelemetry()
+        .WithTracing(builder => builder
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddSqlClientInstrumentation()
+            //.AddJaegerExporter()
+            .AddConsoleExporter()
+        )
+        .StartWithHost();
 }
 
 void AddLogCentreDbContext(WebApplicationBuilder webApplicationBuilder)

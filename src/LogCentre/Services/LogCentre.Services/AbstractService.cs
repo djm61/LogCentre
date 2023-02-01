@@ -28,9 +28,18 @@ namespace LogCentre.Services
 
         public abstract bool TryGet(TKey id, out TEntity entity);
 
+        /// <summary>
+        /// Get data based on the entity type
+        /// </summary>
+        /// <param name="filter">filter predecate</param>
+        /// <param name="orderBy">order by predicate</param>
+        /// <param name="includeProperties">include properties string</param>
+        /// <param name="page">page to get</param>
+        /// <param name="pageSize">page size to get</param>
+        /// <returns>enumerable object of the entity type</returns>
         public async Task<IEnumerable<TEntity>> GetAsync(
             Expression<Func<TEntity, bool>> filter,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
             string includeProperties = "",
             int page = 0,
             int pageSize = 0)
@@ -59,7 +68,7 @@ namespace LogCentre.Services
 
         public async Task<long> CountAsync(
             Expression<Func<TEntity, bool>> filter,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
             string includeProperties = "",
             int page = 0,
             int pageSize = 0)

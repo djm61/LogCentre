@@ -11,6 +11,7 @@
         public LineModel()
         {
             LogLine = string.Empty;
+            FullLine = string.Empty;
         }
 
         /// <summary>

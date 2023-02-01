@@ -206,7 +206,7 @@ namespace LogCentre.ApiClient
             return response;
         }
 
-        public IList<FileModel> GetFilesByLogSourceId
+        //public IList<FileModel> GetFilesByLogSourceId
 
         public async Task<FileModel> CreateLogFileAsync(FileModel logFile, CancellationToken cancellationToken = default)
         {
