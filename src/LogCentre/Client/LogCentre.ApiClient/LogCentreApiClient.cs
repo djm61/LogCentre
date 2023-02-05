@@ -298,11 +298,19 @@ namespace LogCentre.ApiClient
 
         #region Searching
 
-        public async Task<IList<SearchResultModel>> GetItensForSearchingAsync(SearchModel searchModel, CancellationToken cancellationToken = default)
+        public async Task<IList<SearchResultModel>> GetItemsForSearchingAsync(SearchModel searchModel, CancellationToken cancellationToken = default)
         {
             Logger.LogDebug("GetItemsForSearchingAsync() | searchModel[{searchModel}]", searchModel);
             var uri = "Search/search";
             var response = await PostForSearchAsync(uri, searchModel, cancellationToken);
+            return response;
+        }
+
+        public async Task<IList<SearchResultModel>> GetFileContentsFromLineIdAsync(long lineId, CancellationToken cancellationToken = default)
+        {
+            Logger.LogDebug("GetFileContentsFromLineIdAsync() | lineId[{lineId}]", lineId);
+            var uri = $"Search/line/{lineId}";
+            var response = await GetAsync<IList<SearchResultModel>>(uri, cancellationToken);
             return response;
         }
 

@@ -1,0 +1,54 @@
+﻿@page
+@model LogCentre.Web.Pages.LogFileModel
+@{
+    ViewData["Title"] = "Log File";
+}
+
+<div class="table-responsive-lg">
+    <table id="tblResult" class="table table-striped table-bordered">
+        <caption>Search Results</caption>
+        <thead>
+            <tr>
+                <th class="d-none">Id</th>
+                <th>Date</th>
+                <th>Level</th>
+                <th>Source</th>
+                <th>Line</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.LogLines.Count > 0)
+            {
+                @foreach (var line in Model.LogLines)
+                {
+                    @if (Model.LineId == line.Id)
+                    {
+                        <tr class="selectedLine">
+                            <td class="d-none">@line.Id</td>
+                            <td>@line.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff")</td>
+                            <td>@line.Level</td>
+                            <td>@line.Source</td>
+                            <td>@line.LogLine</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td class="d-none">@line.Id</td>
+                            <td>@line.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff")</td>
+                            <td>@line.Level</td>
+                            <td>@line.Source</td>
+                            <td>@line.LogLine</td>
+                        </tr>
+                    }
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">No Results</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

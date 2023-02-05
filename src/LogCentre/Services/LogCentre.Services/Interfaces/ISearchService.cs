@@ -6,5 +6,6 @@ namespace LogCentre.Services.Interfaces
     {
         Task<IList<string>> GetDistinctLogLevelsAsync(CancellationToken cancellationToken = default);
         Task<IList<SearchResultModel>> SearchAsync(SearchModel searchModel, CancellationToken cancellationToken = default);
+        Task<IList<SearchResultModel>> GetFileLinesAsync(long lineId, CancellationToken cancellationToken = default);
     }
 }

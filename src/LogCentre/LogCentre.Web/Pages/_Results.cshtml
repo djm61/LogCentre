@@ -7,6 +7,7 @@
         <caption>Search Results</caption>
         <thead>
             <tr>
+                <th class="d-none">Id</th>
                 <th>Date</th>
                 <th>Level</th>
                 <th>Source</th>
@@ -28,13 +29,31 @@
                         </tr>
                     }
                     <tr>
+                        <td class="d-none">@line.Id</td>
                         <td>@line.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff")</td>
                         <td>@line.Level</td>
                         <td>@line.Source</td>
-                        <td>@line.LogLine</td>
+                        <td class="logLineResult">@line.LogLine</td>
                     </tr>
                 }
             }
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.logLineResult').on('click', function (e) {
+            debugger;
+            window.console.log('.logLineResult click!');
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            //let row = $(this).closest('tr');
+            //let td = row.children('td:first');
+            //let id = td.text();
+            let id = $(this).closest('tr').children('td:first').text();
+            let url = '@Url.Page("LogFile")?id=' + id;
+            window.open(url, '_blank');
+        });
+    });
+</script>

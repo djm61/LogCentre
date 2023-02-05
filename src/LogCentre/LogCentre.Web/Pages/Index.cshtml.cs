@@ -36,7 +36,7 @@ namespace LogCentre.Web.Pages
 
             try
             {
-                var results = await ApiClient.GetItensForSearchingAsync(searchModel);
+                var results = await ApiClient.GetItemsForSearchingAsync(searchModel);
                 var html = await RenderService.ToStringAsync("_Results", results);
                 return new JsonResult(new { isValid = true, html = html });
             }
@@ -50,6 +50,11 @@ namespace LogCentre.Web.Pages
                 stopwatch.Stop();
                 Logger.LogInformation("**** OnGetPerformSearchAsync took [{0}]", stopwatch.Elapsed);
             }
+        }
+
+        public async Task<JsonResult> OnGetLogFileAsync(long id)
+        {
+            return new JsonResult(new { isValid = true, html = id.ToString() });
         }
 
         private async Task<SelectList> GetLevelSelectList()

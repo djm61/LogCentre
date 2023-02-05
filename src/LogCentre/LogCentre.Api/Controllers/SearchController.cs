@@ -64,6 +64,37 @@ namespace LogCentre.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Returns file contents from a provided line Id
+        /// </summary>
+        /// <param name="apiVersion"></param>
+        /// <param name="lineId"></param>
+        /// <returns></returns>
+        [HttpGet("line/{lineId:long}"), Benchmark]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<SearchResultModel>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetFileContentsByLineId(ApiVersion apiVersion, [FromRoute] long lineId)
+        {
+            Logger.LogDebug("GetFileContentsByLineId() | id[{lineId}]", lineId);
+            var stopwatch = Stopwatch.StartNew();
+
+            try
+            {
+                var lines = await _searchService.GetFileLinesAsync(lineId);
+                return Ok(lines);
+            }
+            catch (Exception ex)
+            {
+                return HandleServerError("An error has occurred", $"GetFileContentsByLineId() produced an exception [{ex.Message}]", ex);
+            }
+            finally
+            {
+                stopwatch.Stop();
+                Logger.LogInformation("**** GetFileContentsByLineId took [{0}]", stopwatch.Elapsed);
+            }
+        }
+
         #endregion
 
         #region Post

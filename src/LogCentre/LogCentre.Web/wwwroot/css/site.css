@@ -21,3 +21,11 @@ body {
     vertical-align: top;
     font-size: 12px;
 }
+
+.logLineResult {
+    cursor: pointer;
+}
+
+.selectedLine {
+    background-color: #090;
+}

@@ -45,6 +45,7 @@ builder.Services.AddAutoMapper(typeof(LogCentreAutoMapperProfile));
 var backgroundServiceSettings = builder.Configuration.GetSection("BackgroundServiceSettings").Get<LogBackgroundServiceSettings>();
 if (backgroundServiceSettings == null) throw new Exception("Missing Configuration Section: BackgroundServiceSettings");
 builder.Services.AddSingleton(backgroundServiceSettings);
+
 //caching settings
 var cachingSettings = builder.Configuration.GetSection("CachingSettings").Get<CachingSettings>();
 if (cachingSettings == null) throw new Exception("Missing Configuration Section: CachingSettings");
