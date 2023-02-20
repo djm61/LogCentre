@@ -2,7 +2,7 @@
 <package >
 	<metadata>
 		<id>LogCentre.Web</id>
-		<version>0.0.4</version>
+		<version>0.0.5</version>
 		<title>Log Centre Web</title>
 		<authors>Mike Clarkson (mike.clarkson@gmail.com)</authors>
 		<owners>Mike Clarkson (mike.clarkson@gmail.com)</owners>
