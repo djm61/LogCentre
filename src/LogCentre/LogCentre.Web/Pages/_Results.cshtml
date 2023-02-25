@@ -20,7 +20,7 @@
                 var file = string.Empty;
                 @foreach (var line in Model)
                 {
-                    if (file != line.FileModel.Name)
+                    if (line.FileModel != null && file != line.FileModel.Name)
                     {
                         file = line.FileModel.Name;
                         var fullPath = System.IO.Path.Combine(line.FileModel.LogSource.Path, line.FileModel.Name);
@@ -28,6 +28,7 @@
                             <td colspan="4"><strong>@fullPath</strong></td>
                         </tr>
                     }
+
                     <tr>
                         <td class="d-none">@line.Id</td>
                         <td>@line.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff")</td>

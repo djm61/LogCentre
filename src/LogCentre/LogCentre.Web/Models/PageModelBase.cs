@@ -14,6 +14,8 @@ namespace LogCentre.Web.Models
         internal PageModelBase(ILogger<T> logger)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            ApiClient = null;
+            RenderService = null;
 
             SoftwareRelease = string.Empty;
             SoftwareVersion = string.Empty;

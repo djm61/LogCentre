@@ -3,7 +3,7 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "jquery@3.6.1",
+      "library": "jquery@3.6.3",
       "destination": "wwwroot/lib/jquery/"
     },
     {
@@ -31,7 +31,7 @@
       "destination": "wwwroot/lib/popperjs"
     },
     {
-      "library": "jquery-jgrowl@1.4.8",
+      "library": "jquery-jgrowl@1.4.9",
       "destination": "wwwroot/lib/jgrowl"
     },
     {

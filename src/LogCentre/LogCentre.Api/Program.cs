@@ -176,7 +176,8 @@ void AddOpenTelemetry(IServiceCollection serviceCollection)
             //.AddJaegerExporter()
             .AddConsoleExporter()
         )
-        .StartWithHost();
+        //.StartWithHost()
+        ;
 }
 
 void AddLogCentreDbContext(WebApplicationBuilder webApplicationBuilder)

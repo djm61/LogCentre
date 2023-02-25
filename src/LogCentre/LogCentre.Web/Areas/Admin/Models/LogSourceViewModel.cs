@@ -8,12 +8,6 @@ namespace LogCentre.Web.Areas.Admin.Models
 {
     public class LogSourceViewModel
     {
-        public LogSourceViewModel()
-        {
-            Active = ModelLiterals.Yes;
-            Deleted = ModelLiterals.No;
-        }
-
         public long Id { get; set; }
 
         [Required]
@@ -25,29 +19,29 @@ namespace LogCentre.Web.Areas.Admin.Models
         [Required]
         [StringLength(ModelLiterals.NameLength)]
         [MaxLength(ModelLiterals.NameLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [StringLength(ModelLiterals.PathLength)]
         [MaxLength(ModelLiterals.PathLength)]
-        public string Path { get; set; }
+        public string Path { get; set; } = string.Empty;
 
         [Required]
         [StringLength(ModelLiterals.FlagLength)]
         [MaxLength(ModelLiterals.FlagLength)]
-        public string Active { get; set; }
+        public string Active { get; set; } = ModelLiterals.Yes;
 
         [Required]
         [StringLength(ModelLiterals.FlagLength)]
         [MaxLength(ModelLiterals.FlagLength)]
-        public string Deleted { get; set; }
+        public string Deleted { get; set; } = ModelLiterals.No;
 
         public HostModel? Host { get; set; }
         public ProviderModel? Provider { get; set; }
 
-        public SelectList HostSelectList { get; set; }
+        public SelectList HostSelectList { get; set; } = new SelectList(new List<string>());
 
-        public SelectList ProviderSelectList { get; set; }
+        public SelectList ProviderSelectList { get; set; } = new SelectList(new List<string>());
 
         public override string ToString()
         {

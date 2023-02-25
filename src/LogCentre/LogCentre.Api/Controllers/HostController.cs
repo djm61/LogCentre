@@ -44,6 +44,11 @@ namespace LogCentre.Api.Controllers
 
         #region Get
 
+        /// <summary>
+        /// Get's a Host by it's Id
+        /// </summary>
+        /// <param name="id">Id of Host to get</param>
+        /// <returns><see cref="HostModel"/></returns>
         [HttpGet("{id:long}", Name = nameof(GetHostById)), Benchmark]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HostModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -82,6 +87,10 @@ namespace LogCentre.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets all hosts
+        /// </summary>
+        /// <returns>List of <see cref="HostModel"/>s</returns>
         [HttpGet("all", Name = nameof(GetHosts)), Benchmark]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<HostModel>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -126,15 +126,22 @@ void AddHsts(IServiceCollection serviceCollection, IConfiguration configuration)
 
 void AddOpenTelemetry(IServiceCollection serviceCollection)
 {
-    serviceCollection.AddOpenTelemetry()
+    builder.Services.AddOpenTelemetry()
         .WithTracing(builder => builder
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddSqlClientInstrumentation()
-            //.AddJaegerExporter()
             .AddConsoleExporter()
-        )
-        .StartWithHost();
+         );
+    //serviceCollection.AddOpenTelemetry()
+    //    .WithTracing(builder => builder
+    //        .AddAspNetCoreInstrumentation()
+    //        .AddHttpClientInstrumentation()
+    //        .AddSqlClientInstrumentation()
+    //        //.AddJaegerExporter()
+    //        .AddConsoleExporter()
+    //    )
+    //    .StartWithHost();
 }
 
 void AddHttpClientFactory(IServiceCollection serviceCollection, IConfiguration configuration)
